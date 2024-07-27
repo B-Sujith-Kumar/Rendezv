@@ -23,7 +23,10 @@ SplashScreen.preventAutoHideAsync();
 
 export default function RootLayout() {
   const [loaded, error] = useFonts({
-    SpaceMono: require('../assets/fonts/SpaceMono-Regular.ttf'),
+    FontRegular: require('../assets/fonts/PlusJakartaSans-Regular.ttf'),
+    FontBold: require('../assets/fonts/PlusJakartaSans-Bold.ttf'),
+    FontMedium: require('../assets/fonts/PlusJakartaSans-Medium.ttf'),
+    FontSemiBold: require('../assets/fonts/PlusJakartaSans-SemiBold.ttf'),
     ...FontAwesome.font,
   });
 
