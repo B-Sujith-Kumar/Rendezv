@@ -62,15 +62,14 @@ function RootLayoutNav() {
         publishableKey={process.env.EXPO_PUBLIC_CLERK_PUBLISHABLE_KEY!}
       >
         <SignedOut>
-            <Stack>
-                <Stack.Screen name="(auth)" options={{ headerShown: false }} />
-            </Stack>
+          <Stack>
+            <Stack.Screen name="(auth)" options={{ headerShown: false }} />
+          </Stack>
         </SignedOut>
         <SignedIn>
-            <Stack>
-                <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-                <Stack.Screen name="(auth)" options={{ headerShown: false }} />
-            </Stack>
+          <Stack>
+            <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+          </Stack>
         </SignedIn>
       </ClerkProvider>
     </ThemeProvider>

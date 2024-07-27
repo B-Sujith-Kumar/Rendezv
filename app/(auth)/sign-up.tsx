@@ -6,11 +6,14 @@ import {
   TouchableOpacity,
 } from "react-native";
 import React from "react";
-import { Link, Stack } from "expo-router";
+import { Link, Redirect, Stack } from "expo-router";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Feather, FontAwesome } from "@expo/vector-icons";
 import { Fontisto } from "@expo/vector-icons";
 import { FontAwesome5 } from "@expo/vector-icons";
+import OAuthGoogle from "@/components/auth/OAuthGoogle";
+import OAuthFacebook from "@/components/auth/OAuthFacebook";
+import { SignedIn, SignedOut } from "@clerk/clerk-expo";
 
 const SignUp = () => {
   const [showPassword, setShowPassword] = React.useState(false);
@@ -18,87 +21,83 @@ const SignUp = () => {
     <>
       <Stack.Screen options={{ headerShown: false }} />
       <View style={styles.container}>
-        <Text
-          style={{ fontFamily: "FontRegular", color: "white", fontSize: 17 }}
-        >
-          Hey there,
-        </Text>
-        <Text
-          style={{
-            fontFamily: "FontBold",
-            color: "white",
-            fontSize: 32,
-            marginVertical: 10,
-          }}
-        >
-          Create an account
-        </Text>
-        <View style={{ width: "100%", padding: 10, gap: 15, marginTop: 20 }}>
-          <View style={styles.inputContainer}>
-            <Feather name="user" size={16} color="#a0a0a0" />
-            <TextInput style={styles.input} placeholder="Name" />
-          </View>
-          <View style={styles.inputContainer}>
-            <Fontisto name="email" size={16} color="#a0a0a0" />
-            <TextInput
-              style={styles.input}
-              placeholder="Email"
-              keyboardType="email-address"
-            />
-          </View>
-          <View style={styles.inputContainer}>
-            <Feather name="lock" size={16} color="#a0a0a0" />
-            <TextInput
-              style={styles.input}
-              placeholder="Password"
-              secureTextEntry={showPassword ? false : true}
-            />
-            {showPassword && (
-              <TouchableOpacity onPress={() => setShowPassword(false)}>
-                <FontAwesome5 name="eye" size={16} color="#a0a0a0" />
-              </TouchableOpacity>
-            )}
-            {!showPassword && (
-              <TouchableOpacity onPress={() => setShowPassword(true)}>
-                <FontAwesome5 name="eye-slash" size={16} color="#a0a0a0" />
-              </TouchableOpacity>
-            )}
-          </View>
-          <TouchableOpacity style={styles.button}>
-            <Text
-              style={{ color: "black", fontSize: 18, fontFamily: "FontBold" }}
-            >
-              Sign Up
-            </Text>
-          </TouchableOpacity>
-        </View>
-        <View style={styles.seperatorContainer}>
-          <View style={styles.seperator}></View>
-          <Text style={{ color: "white" }}>Or</Text>
-          <View style={styles.seperator}></View>
-        </View>
-        <TouchableOpacity style={styles.socialLogin}>
-          <Fontisto name="google" size={24} color="white" />
+        <SignedIn>
+          <Redirect href="/(tabs)" />
+        </SignedIn>
+        <SignedOut>
           <Text
-            style={{ color: "white", fontSize: 18, fontFamily: "FontBold" }}
+            style={{ fontFamily: "FontRegular", color: "white", fontSize: 17 }}
           >
-            Continue with Google
+            Hey there,
           </Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.socialLogin}>
-          <FontAwesome name="facebook" size={24} color="white" />
           <Text
-            style={{ color: "white", fontSize: 18, fontFamily: "FontBold" }}
+            style={{
+              fontFamily: "FontBold",
+              color: "white",
+              fontSize: 32,
+              marginVertical: 10,
+            }}
           >
-            Continue with Facebook
+            Create an account
           </Text>
-        </TouchableOpacity>
-        <View>
+          <View style={{ width: "100%", padding: 10, gap: 15, marginTop: 20 }}>
+            <View style={styles.inputContainer}>
+              <Feather name="user" size={16} color="#a0a0a0" />
+              <TextInput style={styles.input} placeholder="Name" />
+            </View>
+            <View style={styles.inputContainer}>
+              <Fontisto name="email" size={16} color="#a0a0a0" />
+              <TextInput
+                style={styles.input}
+                placeholder="Email"
+                keyboardType="email-address"
+              />
+            </View>
+            <View style={styles.inputContainer}>
+              <Feather name="lock" size={16} color="#a0a0a0" />
+              <TextInput
+                style={styles.input}
+                placeholder="Password"
+                secureTextEntry={showPassword ? false : true}
+              />
+              {showPassword && (
+                <TouchableOpacity onPress={() => setShowPassword(false)}>
+                  <FontAwesome5 name="eye" size={16} color="#a0a0a0" />
+                </TouchableOpacity>
+              )}
+              {!showPassword && (
+                <TouchableOpacity onPress={() => setShowPassword(true)}>
+                  <FontAwesome5 name="eye-slash" size={16} color="#a0a0a0" />
+                </TouchableOpacity>
+              )}
+            </View>
+            <TouchableOpacity style={styles.button}>
+              <Text
+                style={{ color: "black", fontSize: 18, fontFamily: "FontBold" }}
+              >
+                Sign Up
+              </Text>
+            </TouchableOpacity>
+          </View>
+          <View style={styles.seperatorContainer}>
+            <View style={styles.seperator}></View>
+            <Text style={{ color: "white" }}>Or</Text>
+            <View style={styles.seperator}></View>
+          </View>
+          <OAuthGoogle />
+          <OAuthFacebook />
+          <View>
             <Text style={{ color: "#8d8d8d", marginTop: 20 }}>
-                Already have an account?{" "}
-                <Link href="/sign-in" style={{ color: "white", fontFamily: "FontBold" }}>Login</Link>
+              Already have an account?{" "}
+              <Link
+                href="/sign-in"
+                style={{ color: "white", fontFamily: "FontBold" }}
+              >
+                Login
+              </Link>
             </Text>
-        </View>
+          </View>
+        </SignedOut>
       </View>
     </>
   );
