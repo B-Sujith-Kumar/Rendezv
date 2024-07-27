@@ -79,6 +79,7 @@ const SignIn = () => {
               <Fontisto name="email" size={16} color="#a0a0a0" />
               <TextInput
                 style={styles.input}
+                autoCapitalize="none"
                 placeholder="Email"
                 keyboardType="email-address"
                 onChangeText={setEmailAddress}

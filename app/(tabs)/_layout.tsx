@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
 import { Link, Redirect, Tabs } from "expo-router";
 import { Pressable } from "react-native";
@@ -6,9 +6,9 @@ import { Pressable } from "react-native";
 import Colors from "@/constants/Colors";
 import { useColorScheme } from "@/components/useColorScheme";
 import { useClientOnlyValue } from "@/components/useClientOnlyValue";
-import { SignedIn, SignedOut } from "@clerk/clerk-expo";
+import { SignedIn, SignedOut, useUser } from "@clerk/clerk-expo";
+import { supabase } from "@/lib/supabase";
 
-// You can explore the built-in icon families and icons on the web at https://icons.expo.fyi/
 function TabBarIcon(props: {
   name: React.ComponentProps<typeof FontAwesome>["name"];
   color: string;
@@ -18,6 +18,19 @@ function TabBarIcon(props: {
 
 export default function TabLayout() {
   const colorScheme = useColorScheme();
+  const { user } = useUser();
+  const updateProfileImage = async () => {
+    const { data, error } = await supabase
+      .from("Users")
+      .update({ profileImage: user?.imageUrl })
+      .eq("email", user?.primaryEmailAddress?.emailAddress)
+      .is("profileImage", null)
+      .select();
+  };
+
+  useEffect(() => {
+    user && updateProfileImage();
+  }, [user]);
 
   return (
     <>
