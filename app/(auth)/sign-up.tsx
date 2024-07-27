@@ -4,19 +4,52 @@ import {
   StyleSheet,
   TextInput,
   TouchableOpacity,
+  Alert,
 } from "react-native";
-import React from "react";
-import { Link, Redirect, Stack } from "expo-router";
+import React, { useState } from "react";
+import { Link, Redirect, router, Stack } from "expo-router";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Feather, FontAwesome } from "@expo/vector-icons";
 import { Fontisto } from "@expo/vector-icons";
 import { FontAwesome5 } from "@expo/vector-icons";
 import OAuthGoogle from "@/components/auth/OAuthGoogle";
 import OAuthFacebook from "@/components/auth/OAuthFacebook";
-import { SignedIn, SignedOut } from "@clerk/clerk-expo";
+import { SignedIn, SignedOut, useSignUp } from "@clerk/clerk-expo";
 
 const SignUp = () => {
+  const { isLoaded, signUp, setActive } = useSignUp();
   const [showPassword, setShowPassword] = React.useState(false);
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [name, setName] = useState("");
+  const [pendingVerification, setPendingVerification] = useState(false);
+  const [loading, setLoading] = useState(false);
+
+  if (!isLoaded) return;
+
+  const handleSignUp = async () => {
+    setLoading(true);
+    try {
+      if (email.trim() === "" || password.trim() === "" || name.trim() === "") {
+        return Alert.alert(
+          "Error",
+          "Please fill in all fields, and try again."
+        );
+      }
+      await signUp?.create({
+        emailAddress: email,
+        password,
+        firstName: name,
+      });
+      await signUp.prepareEmailAddressVerification({ strategy: "email_code" });
+      setPendingVerification(true);
+      router.push("/(auth)/verify-otp");
+    } catch (err: any) {
+      Alert.alert("Error", err.errors[0].message);
+    } finally {
+      setLoading(false);
+    }
+  };
   return (
     <>
       <Stack.Screen options={{ headerShown: false }} />
@@ -43,7 +76,12 @@ const SignUp = () => {
           <View style={{ width: "100%", padding: 10, gap: 15, marginTop: 20 }}>
             <View style={styles.inputContainer}>
               <Feather name="user" size={16} color="#a0a0a0" />
-              <TextInput style={styles.input} placeholder="Name" />
+              <TextInput
+                style={styles.input}
+                placeholder="Name"
+                value={name}
+                onChangeText={setName}
+              />
             </View>
             <View style={styles.inputContainer}>
               <Fontisto name="email" size={16} color="#a0a0a0" />
@@ -51,6 +89,8 @@ const SignUp = () => {
                 style={styles.input}
                 placeholder="Email"
                 keyboardType="email-address"
+                value={email}
+                onChangeText={setEmail}
               />
             </View>
             <View style={styles.inputContainer}>
@@ -59,6 +99,8 @@ const SignUp = () => {
                 style={styles.input}
                 placeholder="Password"
                 secureTextEntry={showPassword ? false : true}
+                value={password}
+                onChangeText={setPassword}
               />
               {showPassword && (
                 <TouchableOpacity onPress={() => setShowPassword(false)}>
@@ -71,7 +113,7 @@ const SignUp = () => {
                 </TouchableOpacity>
               )}
             </View>
-            <TouchableOpacity style={styles.button}>
+            <TouchableOpacity style={styles.button} onPress={handleSignUp}>
               <Text
                 style={{ color: "black", fontSize: 18, fontFamily: "FontBold" }}
               >
