@@ -6,8 +6,12 @@ import { Pressable } from "react-native";
 import Colors from "@/constants/Colors";
 import { useColorScheme } from "@/components/useColorScheme";
 import { useClientOnlyValue } from "@/components/useClientOnlyValue";
-import { SignedIn, SignedOut, useUser } from "@clerk/clerk-expo";
+import { SignedIn, SignedOut, useAuth, useUser } from "@clerk/clerk-expo";
 import { supabase } from "@/lib/supabase";
+
+import { AntDesign } from '@expo/vector-icons';
+import { Feather } from '@expo/vector-icons';
+import { MaterialIcons } from '@expo/vector-icons';
 
 function TabBarIcon(props: {
   name: React.ComponentProps<typeof FontAwesome>["name"];
@@ -32,6 +36,12 @@ export default function TabLayout() {
     user && updateProfileImage();
   }, [user]);
 
+  const { isSignedIn } = useAuth();
+  
+  if (!isSignedIn) {
+    return <Redirect href="/(auth)/sign-in" />;
+  }
+
   return (
     <>
       <SignedOut>
@@ -42,37 +52,49 @@ export default function TabLayout() {
           screenOptions={{
             tabBarActiveTintColor: Colors[colorScheme ?? "light"].tint,
             headerShown: useClientOnlyValue(false, true),
+            tabBarShowLabel: false,
           }}
         >
           <Tabs.Screen
             name="index"
             options={{
-              title: "Tab One",
+              title: "Home",
+              tabBarLabelStyle: { fontFamily: "FontRegular" },
               tabBarIcon: ({ color }) => (
-                <TabBarIcon name="code" color={color} />
-              ),
-              headerRight: () => (
-                <Link href="/modal" asChild>
-                  <Pressable>
-                    {({ pressed }) => (
-                      <FontAwesome
-                        name="info-circle"
-                        size={25}
-                        color={Colors[colorScheme ?? "light"].text}
-                        style={{ marginRight: 15, opacity: pressed ? 0.5 : 1 }}
-                      />
-                    )}
-                  </Pressable>
-                </Link>
+                <AntDesign name="home" size={24} color={color} />
               ),
             }}
           />
           <Tabs.Screen
             name="two"
             options={{
-              title: "Tab Two",
+              title: "Explore",
+              tabBarLabelStyle: { fontFamily: "FontRegular" },
+              tabBarInactiveTintColor: "gray",
               tabBarIcon: ({ color }) => (
-                <TabBarIcon name="code" color={color} />
+                <Feather name="compass" size={24} color={color} />
+              ),
+            }}
+          />
+          <Tabs.Screen
+            name="favourites"
+            options={{
+              title: "Favourites",
+              tabBarLabelStyle: { fontFamily: "FontRegular" },
+              tabBarInactiveTintColor: "gray",
+              tabBarIcon: ({ color }) => (
+                <MaterialIcons name="favorite-border" size={24} color={color} />
+              ),
+            }}
+          />
+          <Tabs.Screen
+            name="profile"
+            options={{
+              title: "Profile",
+              tabBarLabelStyle: { fontFamily: "FontRegular" },
+              tabBarInactiveTintColor: "gray",
+              tabBarIcon: ({ color }) => (
+                <Feather name="user" size={24} color={color} />
               ),
             }}
           />

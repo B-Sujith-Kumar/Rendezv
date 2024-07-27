@@ -14,7 +14,7 @@ import { Fontisto } from "@expo/vector-icons";
 import { FontAwesome5 } from "@expo/vector-icons";
 import OAuthGoogle from "@/components/auth/OAuthGoogle";
 import OAuthFacebook from "@/components/auth/OAuthFacebook";
-import { SignedIn, SignedOut, useSignUp } from "@clerk/clerk-expo";
+import { SignedIn, SignedOut, useAuth, useSignUp } from "@clerk/clerk-expo";
 
 const SignUp = () => {
   const { isLoaded, signUp, setActive } = useSignUp();
@@ -24,6 +24,11 @@ const SignUp = () => {
   const [name, setName] = useState("");
   const [pendingVerification, setPendingVerification] = useState(false);
   const [loading, setLoading] = useState(false);
+
+  const { isSignedIn } = useAuth();
+  if (isSignedIn) {
+    return <Redirect href="/(tabs)" />;
+  }
 
   if (!isLoaded) return;
 

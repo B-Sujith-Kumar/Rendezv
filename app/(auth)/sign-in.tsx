@@ -13,7 +13,7 @@ import { Fontisto } from "@expo/vector-icons";
 import { FontAwesome5 } from "@expo/vector-icons";
 import OAuthGoogle from "@/components/auth/OAuthGoogle";
 import OAuthFacebook from "@/components/auth/OAuthFacebook";
-import { SignedIn, SignedOut, useSignIn } from "@clerk/clerk-expo";
+import { SignedIn, SignedOut, useAuth, useSignIn } from "@clerk/clerk-expo";
 
 const SignIn = () => {
   const { signIn, setActive, isLoaded } = useSignIn();
@@ -21,6 +21,11 @@ const SignIn = () => {
   const [password, setPassword] = React.useState("");
   const [showPassword, setShowPassword] = React.useState(false);
   const [loading, setLoading] = React.useState(false);
+
+  const { isSignedIn } = useAuth();
+  if (isSignedIn) {
+    return <Redirect href="/(tabs)" />;
+  }
 
   const onSignInPress = React.useCallback(async () => {
     if (!isLoaded) {
