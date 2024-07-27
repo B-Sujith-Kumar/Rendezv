@@ -5,6 +5,7 @@ import { Link } from "expo-router";
 import { useOAuth } from "@clerk/clerk-expo";
 import * as Linking from "expo-linking";
 import { Fontisto } from "@expo/vector-icons";
+import { supabase } from "@/lib/supabase";
 
 export const useWarmUpBrowser = () => {
   React.useEffect(() => {
@@ -31,7 +32,18 @@ const OAuthFacebook = () => {
 
       if (createdSessionId) {
         setActive!({ session: createdSessionId });
+        const { data, error } = await supabase
+          .from("Users")
+          .insert([
+            {
+              email: signUp?.emailAddress,
+              name: signUp?.firstName + " " + signUp?.lastName,
+            },
+          ])
+          .select();
+          console.log(data);
       } else {
+        console.error("OAuth flow was not completed");
       }
     } catch (err) {
       console.error("OAuth error", err);

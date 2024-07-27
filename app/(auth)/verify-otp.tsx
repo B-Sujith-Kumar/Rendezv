@@ -1,9 +1,17 @@
-import { View, Text, StyleSheet, Touchable, TouchableOpacity, Alert } from "react-native";
+import {
+  View,
+  Text,
+  StyleSheet,
+  Touchable,
+  TouchableOpacity,
+  Alert,
+} from "react-native";
 import React, { useRef } from "react";
 import { router, Stack } from "expo-router";
 import { SafeAreaView } from "react-native-safe-area-context";
 import OTPTextView from "react-native-otp-textinput";
 import { useSignUp } from "@clerk/clerk-expo";
+import { supabase } from "@/lib/supabase";
 
 const VerifyOTP = () => {
   let otpInput = useRef(null);
@@ -19,24 +27,39 @@ const VerifyOTP = () => {
 
   const onPressVerify = async () => {
     if (!isLoaded) {
-      return
+      return;
     }
 
     try {
       const completeSignUp = await signUp.attemptEmailAddressVerification({
         code,
-      })
+      });
 
-      if (completeSignUp.status === 'complete') {
-        await setActive({ session: completeSignUp.createdSessionId })
+      if (completeSignUp.status === "complete") {
+        await setActive({ session: completeSignUp.createdSessionId });
+        const { data, error } = await supabase
+          .from("Users")
+          .insert([
+            {
+              email: signUp.emailAddress,
+              name: signUp.firstName,
+            },
+          ])
+          .select();
         router.replace("/(tabs)");
       } else {
-          return Alert.alert("Error", "We couldn't verify your email address. Please try again.");
+        return Alert.alert(
+          "Error",
+          "We couldn't verify your email address. Please try again."
+        );
       }
     } catch (err: any) {
-      return Alert.alert("Error", "Invalid verification code. Please try again.")
+      return Alert.alert(
+        "Error",
+        "Invalid verification code. Please try again."
+      );
     }
-  }
+  };
 
   return (
     <>
@@ -55,7 +78,7 @@ const VerifyOTP = () => {
             We've sent a verification code to your email address. Please enter
             it below
           </Text>
-          <View style={{marginTop: 40,}}>
+          <View style={{ marginTop: 40 }}>
             <OTPTextView
               ref={(e) => (otpInput = e)}
               textInputStyle={{
@@ -66,7 +89,7 @@ const VerifyOTP = () => {
                 borderWidth: 1,
                 borderBottomWidth: 0.9,
                 backgroundColor: "#1f1f1f",
-                color: "white"
+                color: "white",
               }}
               keyboardType="numeric"
               handleTextChange={(text) => setCode(text)}
@@ -76,12 +99,12 @@ const VerifyOTP = () => {
             />
           </View>
           <TouchableOpacity style={styles.button} onPress={onPressVerify}>
-              <Text
-                style={{ color: "black", fontSize: 18, fontFamily: "FontBold" }}
-              >
-                Verify
-              </Text>
-            </TouchableOpacity>
+            <Text
+              style={{ color: "black", fontSize: 18, fontFamily: "FontBold" }}
+            >
+              Verify
+            </Text>
+          </TouchableOpacity>
         </View>
       </SafeAreaView>
     </>
