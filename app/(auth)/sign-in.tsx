@@ -4,19 +4,53 @@ import {
   StyleSheet,
   TextInput,
   TouchableOpacity,
+  Alert,
 } from "react-native";
 import React from "react";
-import { Link, Redirect, Stack } from "expo-router";
-import { SafeAreaView } from "react-native-safe-area-context";
-import { Feather, FontAwesome } from "@expo/vector-icons";
+import { Link, Redirect, router, Stack } from "expo-router";
+import { Feather } from "@expo/vector-icons";
 import { Fontisto } from "@expo/vector-icons";
 import { FontAwesome5 } from "@expo/vector-icons";
 import OAuthGoogle from "@/components/auth/OAuthGoogle";
 import OAuthFacebook from "@/components/auth/OAuthFacebook";
-import { SignedIn, SignedOut } from "@clerk/clerk-expo";
+import { SignedIn, SignedOut, useSignIn } from "@clerk/clerk-expo";
 
 const SignIn = () => {
+  const { signIn, setActive, isLoaded } = useSignIn();
+  const [emailAddress, setEmailAddress] = React.useState("");
+  const [password, setPassword] = React.useState("");
   const [showPassword, setShowPassword] = React.useState(false);
+  const [loading, setLoading] = React.useState(false);
+
+  const onSignInPress = React.useCallback(async () => {
+    if (!isLoaded) {
+      return;
+    }
+    if (!emailAddress.trim() || !password.trim()) {
+      return Alert.alert("Error", "Please fill in all fields.");
+    }
+    setLoading(true);
+    try {
+      const signInAttempt = await signIn.create({
+        identifier: emailAddress,
+        password,
+      });
+
+      if (signInAttempt.status === "complete") {
+        await setActive({ session: signInAttempt.createdSessionId });
+        router.replace("/(tabs)");
+      } else {
+        Alert.alert(
+          "Error",
+          "Sorry, we couldn't sign you in. Please try again."
+        );
+      }
+    } catch (err: any) {
+      Alert.alert("Error", err.errors[0].message);
+    } finally {
+      setLoading(false);
+    }
+  }, [isLoaded, emailAddress, password]);
   return (
     <>
       <Stack.Screen options={{ headerShown: false }} />
@@ -47,6 +81,8 @@ const SignIn = () => {
                 style={styles.input}
                 placeholder="Email"
                 keyboardType="email-address"
+                onChangeText={setEmailAddress}
+                value={emailAddress}
               />
             </View>
             <View style={styles.inputContainer}>
@@ -55,6 +91,8 @@ const SignIn = () => {
                 style={styles.input}
                 placeholder="Password"
                 secureTextEntry={showPassword ? false : true}
+                onChangeText={setPassword}
+                value={password}
               />
               {showPassword && (
                 <TouchableOpacity onPress={() => setShowPassword(false)}>
@@ -67,11 +105,11 @@ const SignIn = () => {
                 </TouchableOpacity>
               )}
             </View>
-            <TouchableOpacity style={styles.button}>
+            <TouchableOpacity style={styles.button} onPress={onSignInPress}>
               <Text
                 style={{ color: "black", fontSize: 18, fontFamily: "FontBold" }}
               >
-                Sign In
+                {loading ? "Signing in..." : "Sign In"}
               </Text>
             </TouchableOpacity>
           </View>

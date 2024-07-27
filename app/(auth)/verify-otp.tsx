@@ -1,4 +1,4 @@
-import { View, Text, StyleSheet, Touchable, TouchableOpacity } from "react-native";
+import { View, Text, StyleSheet, Touchable, TouchableOpacity, Alert } from "react-native";
 import React, { useRef } from "react";
 import { router, Stack } from "expo-router";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -31,10 +31,10 @@ const VerifyOTP = () => {
         await setActive({ session: completeSignUp.createdSessionId })
         router.replace("/(tabs)");
       } else {
-        console.error(JSON.stringify(completeSignUp, null, 2))
+          return Alert.alert("Error", "We couldn't verify your email address. Please try again.");
       }
     } catch (err: any) {
-      console.error(JSON.stringify(err, null, 2))
+      return Alert.alert("Error", "Invalid verification code. Please try again.")
     }
   }
 
