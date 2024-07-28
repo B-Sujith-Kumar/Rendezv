@@ -13,7 +13,10 @@ import { Ionicons } from "@expo/vector-icons";
 
 const HomeHeader = () => {
   return (
-    <SafeAreaView style={{ flex: 1 }}>
+    <SafeAreaView
+      edges={["top"]}
+      style={{ flex: 1, backgroundColor: "black", paddingVertical: 0 }}
+    >
       <View style={styles.container}>
         <View style={styles.locationContainer}>
           <Text
@@ -57,6 +60,7 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     flexDirection: "row",
     alignItems: "center",
+    backgroundColor: "black",
   },
   locationContainer: {
     flexDirection: "row",
