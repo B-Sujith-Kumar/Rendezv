@@ -45,12 +45,14 @@ const SignIn = () => {
         await setActive({ session: signInAttempt.createdSessionId });
         router.replace("/(tabs)");
       } else {
+        console.log(JSON.stringify(signInAttempt, null, 2));
         Alert.alert(
           "Error",
           "Sorry, we couldn't sign you in. Please try again."
         );
       }
     } catch (err: any) {
+      console.log(JSON.stringify(err, null, 2));
       Alert.alert("Error", err.errors[0].message);
     } finally {
       setLoading(false);
