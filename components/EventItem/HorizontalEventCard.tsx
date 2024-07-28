@@ -3,7 +3,7 @@ import React from "react";
 import { MaterialIcons } from "@expo/vector-icons";
 import { SimpleLineIcons } from "@expo/vector-icons";
 
-const EventItem = ({ event }: { event: any }) => {
+const HorizontalEventCard = ({ event }: { event: any }) => {
   return (
     <View style={styles.container}>
       <View>
@@ -63,7 +63,7 @@ const EventItem = ({ event }: { event: any }) => {
               fontSize: 25,
             }}
           >
-            {event.title}
+            {event.title.length <= 18 ? event.title : event.title.slice(0, 15) + "..."}
           </Text>
           <TouchableOpacity>
             <MaterialIcons
@@ -111,6 +111,7 @@ const styles = StyleSheet.create({
     padding: 12,
     borderWidth: 0.9,
     borderColor: "#3a3a3a",
+    width: 340,
   },
   banner: {
     width: null,
@@ -122,4 +123,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default EventItem;
+export default HorizontalEventCard;

@@ -77,6 +77,17 @@ export default function TabLayout() {
             }}
           />
           <Tabs.Screen
+            name="create-event"
+            options={{
+              title: "Create Event",
+              tabBarLabelStyle: { fontFamily: "FontRegular" },
+              tabBarInactiveTintColor: "gray",
+              tabBarIcon: ({ color }) => (
+                <AntDesign name="pluscircleo" size={24} color={color} />
+              ),
+            }}
+          />
+          <Tabs.Screen
             name="favourites"
             options={{
               title: "Favourites",

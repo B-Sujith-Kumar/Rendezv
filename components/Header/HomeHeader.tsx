@@ -13,54 +13,48 @@ import { Ionicons } from "@expo/vector-icons";
 
 const HomeHeader = () => {
   return (
-    <SafeAreaView
-      edges={["top"]}
-      style={{ flex: 1, backgroundColor: "black", paddingVertical: 0 }}
-    >
-      <View style={styles.container}>
-        <View style={styles.locationContainer}>
-          <Text
-            style={{ fontSize: 20, fontFamily: "FontMedium", color: "white" }}
-          >
-            Kochi
-          </Text>
-          <AntDesign name="right" size={16} color="white" />
-        </View>
-        <View style={styles.iconContainer}>
-          <TouchableOpacity
-            style={{
-              backgroundColor: "#1c1c1c",
-              padding: 10,
-              borderRadius: 25,
-              paddingHorizontal: 12,
-            }}
-          >
-            <Fontisto name="bell" size={22} color="white" />
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={{
-              backgroundColor: "#1c1c1c",
-              padding: 10,
-              borderRadius: 25,
-            }}
-          >
-            <Ionicons name="search-outline" size={24} color="white" />
-          </TouchableOpacity>
-        </View>
+    <View style={styles.container}>
+      <View style={styles.locationContainer}>
+        <Text
+          style={{ fontSize: 20, fontFamily: "FontMedium", color: "white" }}
+        >
+          Kochi
+        </Text>
+        <AntDesign name="right" size={16} color="white" />
       </View>
-    </SafeAreaView>
+      <View style={styles.iconContainer}>
+        <TouchableOpacity
+          style={{
+            backgroundColor: "#1c1c1c",
+            padding: 10,
+            borderRadius: 25,
+            paddingHorizontal: 12,
+          }}
+        >
+          <Fontisto name="bell" size={22} color="white" />
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={{
+            backgroundColor: "#1c1c1c",
+            padding: 10,
+            borderRadius: 25,
+          }}
+        >
+          <Ionicons name="search-outline" size={24} color="white" />
+        </TouchableOpacity>
+      </View>
+    </View>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
     paddingHorizontal: 20,
-    paddingVertical: 13,
-    paddingBottom: 1,
     justifyContent: "space-between",
     flexDirection: "row",
     alignItems: "center",
     backgroundColor: "black",
+    marginTop: 15,
   },
   locationContainer: {
     flexDirection: "row",

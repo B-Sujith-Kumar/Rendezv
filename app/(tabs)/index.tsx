@@ -14,6 +14,8 @@ import { useRef, useState } from "react";
 import * as Haptics from "expo-haptics";
 import PopularEvents from "@/components/Events/PopularEvents";
 import { SafeAreaView } from "react-native-safe-area-context";
+import OnlineEvents from "@/components/Events/OnlineEvents";
+import FreeEvents from "@/components/Events/FreeEvents";
 
 export default function TabOneScreen() {
   const { isSignedIn } = useAuth();
@@ -36,55 +38,66 @@ export default function TabOneScreen() {
     <>
       <Stack.Screen
         options={{
-          headerTransparent: true,
-          header: () => <HomeHeader />,
+          headerShown: false,
         }}
       />
-      <ScrollView showsVerticalScrollIndicator={false}>
-        <View style={{ flex: 1, marginTop: 140 }}>
-          <View style={styles.container}>
-            <Text style={styles.title}>
-              Hey,{" "}
-              {user?.firstName + (user?.lastName ? " " + user?.lastName : "")}{" "}
-              👋
-            </Text>
-            <Text style={styles.subtitle}>
-              Fuel your passions, Discover events you'll love.
-            </Text>
-            <View style={{ marginTop: 18, paddingHorizontal: 10 }}>
-              <ScrollView
-                horizontal
-                showsHorizontalScrollIndicator={false}
-                ref={scrollRef}
-              >
-                {tabs.map((tab, index) => (
-                  <TouchableOpacity
-                    key={index}
-                    style={
-                      activeIndex === index
-                        ? styles.tabButtonActive
-                        : styles.tabButton
-                    }
-                    onPress={() => selectTab(index)}
-                    ref={(el) => (itemsRef.current[index] = el)}
-                  >
-                    <Text
+      <SafeAreaView
+        edges={["top"]}
+        style={{
+          backgroundColor: "black",
+          marginVertical: 0,
+          paddingVertical: 0,
+        }}
+      >
+        <ScrollView showsVerticalScrollIndicator={false}>
+          <HomeHeader />
+          <View style={{ flex: 1, marginTop: 20 }}>
+            <View style={styles.container}>
+              <Text style={styles.title}>
+                Hey,{" "}
+                {user?.firstName + (user?.lastName ? " " + user?.lastName : "")}{" "}
+                👋
+              </Text>
+              <Text style={styles.subtitle}>
+                Fuel your passions, Discover events you'll love.
+              </Text>
+              <View style={{ marginTop: 18, paddingHorizontal: 10 }}>
+                <ScrollView
+                  horizontal
+                  showsHorizontalScrollIndicator={false}
+                  ref={scrollRef}
+                >
+                  {tabs.map((tab, index) => (
+                    <TouchableOpacity
+                      key={index}
                       style={
                         activeIndex === index
-                          ? styles.tabTextActive
-                          : styles.tabText
+                          ? styles.tabButtonActive
+                          : styles.tabButton
                       }
+                      onPress={() => selectTab(index)}
+                      ref={(el) => (itemsRef.current[index] = el)}
                     >
-                      {tab.name}
-                    </Text>
-                  </TouchableOpacity>
-                ))}
-              </ScrollView>
-              <PopularEvents />
+                      <Text
+                        style={
+                          activeIndex === index
+                            ? styles.tabTextActive
+                            : styles.tabText
+                        }
+                      >
+                        {tab.name}
+                      </Text>
+                    </TouchableOpacity>
+                  ))}
+                </ScrollView>
+                <PopularEvents />
+                <OnlineEvents />
+                <FreeEvents />
+              </View>
             </View>
           </View>
-        </View>
-      </ScrollView>
+        </ScrollView>
+      </SafeAreaView>
     </>
   );
 }

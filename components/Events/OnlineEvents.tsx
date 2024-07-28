@@ -1,10 +1,11 @@
-import { View, Text, ScrollView, FlatList } from "react-native";
-import React from "react";
-import { AntDesign } from "@expo/vector-icons";
-import EventItem from "../EventItem/EventItem";
-import { events } from "@/constants";
+import { View, Text, FlatList } from 'react-native'
+import React from 'react'
+import { AntDesign } from '@expo/vector-icons'
+import { events } from '@/constants'
+import EventItem from '../EventItem/EventItem'
+import HorizontalEventCard from '../EventItem/HorizontalEventCard'
 
-const PopularEvents = () => {
+const OnlineEvents = () => {
   return (
     <View style={{ marginTop: 15, paddingBottom: 20 }}>
       <View
@@ -17,7 +18,7 @@ const PopularEvents = () => {
         <Text
           style={{ color: "white", fontFamily: "FontSemiBold", fontSize: 18 }}
         >
-          Popular events
+          Online events
         </Text>
         <View style={{ flexDirection: "row", alignItems: "center", gap: 4 }}>
           <Text style={{ color: "#e0e0e0", fontFamily: "FontRegular" }}>
@@ -28,13 +29,15 @@ const PopularEvents = () => {
       </View>
       <FlatList
         data={events}
-        renderItem={({ item }) => <EventItem event={item} />}
+        renderItem={({ item }) => <HorizontalEventCard event={item} />}
         keyExtractor={(item, index) => index.toString()}
-        scrollEnabled={false}
-        showsVerticalScrollIndicator={false}
+        scrollEnabled={true}
+        horizontal
+        showsHorizontalScrollIndicator={false}
+        contentContainerStyle={{ gap: 20}}
       />
     </View>
-  );
-};
+  )
+}
 
-export default PopularEvents;
+export default OnlineEvents
