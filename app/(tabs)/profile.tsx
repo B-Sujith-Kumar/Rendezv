@@ -20,6 +20,7 @@ import Animated, {
 import { imgUrl, interests } from "@/constants";
 import { FontAwesome } from "@expo/vector-icons";
 import { MaterialIcons } from "@expo/vector-icons";
+import BottomSheet from "@gorhom/bottom-sheet";
 
 const Profile = () => {
   const { signOut } = useAuth();
@@ -56,7 +57,7 @@ const Profile = () => {
       {
         text: "Yes",
         onPress: () => signOut(),
-        style: "destructive"
+        style: "destructive",
       },
       {
         text: "No",
