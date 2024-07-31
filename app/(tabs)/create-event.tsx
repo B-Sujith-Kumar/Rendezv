@@ -21,27 +21,36 @@ import BottomSheet, {
   BottomSheetView,
 } from "@gorhom/bottom-sheet";
 import MapComponent from "@/components/Map/MapComponent";
+import { useState, useRef } from "react";
+import { useInsertEvent } from "@/api/events";
+import * as FileSystem from "expo-file-system";
+import { supabase } from "@/lib/supabase";
+import { decode } from "base64-arraybuffer";
+import { randomUUID } from "expo-crypto";
 
 const CreateEvent = () => {
-  const [eventMode, setEventMode] = React.useState("Offline");
-  const [isPaid, setIsPaid] = React.useState(false);
-  const [categories, setCategories] = React.useState<string[]>([]);
-  const [image, setImage] = React.useState("");
-  const [venue, setVenue] = React.useState({ latitude: 0, longitude: 0 });
-  const [title, setTitle] = React.useState("");
-  const [description, setDescription] = React.useState("");
-  const [dateField, setDateField] = React.useState("");
-  const [meetingLink, setMeetingLink] = React.useState("");
-  const [venueName, setVenueName] = React.useState("");
-  const [ticketPrice, setTicketPrice] = React.useState("");
-  const [errors, setErrors] = React.useState<{ [key: string]: string }>({});
+  const [eventMode, setEventMode] = useState("Offline");
+  const [isPaid, setIsPaid] = useState(false);
+  const [categories, setCategories] = useState<string[]>([]);
+  const [image, setImage] = useState("");
+  const [venue, setVenue] = useState({ latitude: 0, longitude: 0 });
+  const [title, setTitle] = useState("");
+  const [description, setDescription] = useState("");
+  const [dateField, setDateField] = useState("");
+  const [meetingLink, setMeetingLink] = useState("");
+  const [venueName, setVenueName] = useState("");
+  const [capacity, setCapacity] = useState("");
+  const [ticketPrice, setTicketPrice] = useState("");
+  const [errors, setErrors] = useState<{ [key: string]: string }>({});
 
-  const [date, setDate] = React.useState(new Date());
-  const [mode, setMode] = React.useState("date");
-  const [show, setShow] = React.useState(false);
-  const [showMap, setShowMap] = React.useState(false);
-  const bottomSheetRef = React.useRef<BottomSheet>(null);
+  const [date, setDate] = useState(new Date());
+  const [mode, setMode] = useState("date");
+  const [show, setShow] = useState(false);
+  const [showMap, setShowMap] = useState(false);
+  const bottomSheetRef = useRef<BottomSheet>(null);
   const snapPoints = useMemo(() => ["25%", "50%", "90%"], []);
+
+  const { mutate: insertEvent } = useInsertEvent();
 
   const renderBackdrop = useCallback(
     (props: any) => (
@@ -71,10 +80,10 @@ const CreateEvent = () => {
     setDate(selectedDate);
     setDateField(datetime);
     if (calculateTimeDifference(selectedDate) < 0) {
-        setDateField("");
-        setErrors({ ...errors, date: "Invalid date and time" });
+      setDateField("");
+      setErrors({ ...errors, date: "Invalid date and time" });
     } else {
-        setErrors({ ...errors, date: "" });
+      setErrors({ ...errors, date: "" });
     }
   };
 
@@ -116,6 +125,27 @@ const CreateEvent = () => {
     }
   };
 
+  const uploadImage = async () => {
+    if (!image?.startsWith("file://")) {
+      return;
+    }
+
+    const base64 = await FileSystem.readAsStringAsync(image, {
+      encoding: "base64",
+    });
+    const filePath = `${randomUUID()}.png`;
+    const contentType = "image/png";
+    const { data, error } = await supabase.storage
+      .from("event-banners")
+      .upload(filePath, decode(base64), { contentType });
+
+    console.log(data);
+
+    if (data) {
+      return data.path;
+    }
+  };
+
   const validate = () => {
     const errors: { [key: string]: string } = {};
     if (!title) {
@@ -135,7 +165,7 @@ const CreateEvent = () => {
       errors.venueName = "Venue is required";
     }
     if (eventMode === "Offline" && !venue.latitude && !venue.longitude) {
-        errors.venue = "Select a venue on the map";
+      errors.venue = "Select a venue on the map";
     }
     if (eventMode === "Virtual" && !meetingLink) {
       errors.meetingLink = "Meeting link is required";
@@ -150,9 +180,28 @@ const CreateEvent = () => {
     return Object.keys(errors).length === 0;
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
+    const imagePath = await uploadImage();
     if (validate()) {
-      console.log("Form submitted");
+      const data = {
+        title,
+        description,
+        dateField,
+        eventMode,
+        venueName,
+        meetingLink,
+        isPaid,
+        ticketPrice,
+        capacity,
+        categories,
+        image: imagePath,
+        venue,
+      };
+      insertEvent(data, {
+        onSuccess: () => {
+            Alert.alert("Event created successfully");
+        }
+      });
     }
   };
 
@@ -160,10 +209,15 @@ const CreateEvent = () => {
     <SafeAreaView edges={["top"]} style={{ flex: 1 }}>
       <Stack.Screen options={{ headerShown: false }} />
       <ScrollView showsVerticalScrollIndicator={false}>
-        <Pressable onPress={() => setShow(false)} style={{ height: "100%" }}>
+        <Pressable  style={{ height: "100%" }}>
           <View style={{ padding: 15, paddingHorizontal: 20 }}>
             <Text
-              style={{ color: "white", fontFamily: "FontBold", fontSize: 25, alignSelf: "center" }}
+              style={{
+                color: "white",
+                fontFamily: "FontBold",
+                fontSize: 25,
+                alignSelf: "center",
+              }}
             >
               Create event
             </Text>
@@ -176,7 +230,7 @@ const CreateEvent = () => {
                 alignSelf: "center",
               }}
             >
-                Fill in the details to create an event
+              Fill in the details to create an event
             </Text>
             <View style={{ marginTop: 25 }}>
               <Text style={styles.title}>Title</Text>
@@ -538,6 +592,16 @@ const CreateEvent = () => {
               </Text>
             )}
             <View style={{ marginTop: 25 }}>
+              <Text style={styles.title}>Capacity</Text>
+              <TextInput
+                style={styles.inputStyle}
+                placeholder="Capacity of event"
+                keyboardType="number-pad"
+                value={capacity}
+                onChangeText={setCapacity}
+              />
+            </View>
+            <View style={{ marginTop: 25 }}>
               <Text style={styles.title}>Category</Text>
               <View style={styles.categoryContainer}>
                 <View
@@ -643,13 +707,13 @@ const CreateEvent = () => {
                 {errors.image}
               </Text>
             )}
-          <TouchableOpacity style={styles.button} onPress={handleSubmit}>
-            <Text
-              style={{ color: "black", fontSize: 18, fontFamily: "FontBold" }}
-            >
-              Create event
-            </Text>
-          </TouchableOpacity>
+            <TouchableOpacity style={styles.button} onPress={handleSubmit}>
+              <Text
+                style={{ color: "black", fontSize: 18, fontFamily: "FontBold" }}
+              >
+                Create event
+              </Text>
+            </TouchableOpacity>
           </View>
         </Pressable>
       </ScrollView>
@@ -716,7 +780,7 @@ const styles = StyleSheet.create({
     marginTop: 20,
     alignItems: "center",
     borderRadius: 15,
-    gap: 15
+    gap: 15,
     // backgroundColor: "#2c2c2c",
   },
   contentContainer: {

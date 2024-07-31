@@ -15,6 +15,8 @@ import { ClerkProvider, SignedIn, SignedOut } from "@clerk/clerk-expo";
 import * as SecureStore from "expo-secure-store";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 
+import QueryProvider from "@/providers/QueryProvider";
+
 export { ErrorBoundary } from "expo-router";
 
 export const unstable_settings = {
@@ -84,10 +86,12 @@ function RootLayoutNav() {
           tokenCache={tokenCache}
           publishableKey={process.env.EXPO_PUBLIC_CLERK_PUBLISHABLE_KEY!}
         >
-          <Stack>
-            <Stack.Screen name="(auth)" options={{ headerShown: false }} />
-            <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-          </Stack>
+          <QueryProvider>
+            <Stack>
+              <Stack.Screen name="(auth)" options={{ headerShown: false }} />
+              <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+            </Stack>
+          </QueryProvider>
         </ClerkProvider>
       </ThemeProvider>
     </GestureHandlerRootView>
