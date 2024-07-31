@@ -27,6 +27,7 @@ import * as FileSystem from "expo-file-system";
 import { supabase } from "@/lib/supabase";
 import { decode } from "base64-arraybuffer";
 import { randomUUID } from "expo-crypto";
+import { useUser } from "@clerk/clerk-expo";
 
 const CreateEvent = () => {
   const [eventMode, setEventMode] = useState("Offline");
@@ -51,6 +52,7 @@ const CreateEvent = () => {
   const snapPoints = useMemo(() => ["25%", "50%", "90%"], []);
 
   const { mutate: insertEvent } = useInsertEvent();
+  const { user : currentUser } = useUser();
 
   const renderBackdrop = useCallback(
     (props: any) => (
@@ -196,10 +198,14 @@ const CreateEvent = () => {
         categories,
         image: imagePath,
         venue,
+        email: currentUser?.primaryEmailAddress?.emailAddress,
       };
       insertEvent(data, {
         onSuccess: () => {
-            Alert.alert("Event created successfully");
+          Alert.alert("Event created successfully");
+        },
+        onError: () => {
+            Alert.alert("An error occurred while creating the event");
         }
       });
     }
@@ -209,7 +215,7 @@ const CreateEvent = () => {
     <SafeAreaView edges={["top"]} style={{ flex: 1 }}>
       <Stack.Screen options={{ headerShown: false }} />
       <ScrollView showsVerticalScrollIndicator={false}>
-        <Pressable  style={{ height: "100%" }}>
+        <Pressable style={{ height: "100%" }}>
           <View style={{ padding: 15, paddingHorizontal: 20 }}>
             <Text
               style={{
