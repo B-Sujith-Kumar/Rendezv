@@ -1,5 +1,5 @@
 import { supabase } from "@/lib/supabase";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
 export const useInsertEvent = () => {
   const queryClient = useQueryClient();
@@ -32,12 +32,12 @@ export const useInsertEvent = () => {
             .from("event_categories")
             .insert([{ name: category.toLowerCase() }])
             .single();
-
+          
           if (insertError) {
             console.log(insertError);
           }
-
-          categoryId = newCategory.id;
+          
+          categoryId = (newCategory as any)?.id;
         }
         categoryIds.push(categoryId);
       }
@@ -80,6 +80,23 @@ export const useInsertEvent = () => {
     },
     onSuccess: async () => {
       await queryClient.invalidateQueries({ queryKey: ["events"] });
+    },
+  });
+};
+
+export const useEvent = (id: number) => {
+  return useQuery({
+    queryKey: ["events"],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("events")
+        .select()
+        .eq("id", id)
+        .single();
+      if (error) {
+        console.log(error);
+      }
+      return data;
     },
   });
 };

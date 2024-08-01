@@ -67,3 +67,5 @@ export const interests = [
         icon: "futbol",
     },
 ];
+
+export const url = "https://tzuqtizdmhzesrlsqidb.supabase.co/storage/v1/object/public/event-banners/"

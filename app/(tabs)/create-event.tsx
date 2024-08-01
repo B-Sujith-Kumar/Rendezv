@@ -10,7 +10,7 @@ import {
   Image,
 } from "react-native";
 import React, { useCallback, useMemo } from "react";
-import { Stack } from "expo-router";
+import { Link, Stack } from "expo-router";
 import { SafeAreaView } from "react-native-safe-area-context";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import { Entypo, EvilIcons, FontAwesome } from "@expo/vector-icons";
@@ -238,6 +238,17 @@ const CreateEvent = () => {
             >
               Fill in the details to create an event
             </Text>
+            <Link href={`/(events)/event/6`}
+              style={{
+                color: "gray",
+                fontFamily: "FontMedium",
+                fontSize: 16,
+                marginTop: 10,
+                alignSelf: "center",
+              }}
+            >
+              Click here
+            </Link>
             <View style={{ marginTop: 25 }}>
               <Text style={styles.title}>Title</Text>
               <TextInput
