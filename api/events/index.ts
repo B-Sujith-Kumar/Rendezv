@@ -11,7 +11,7 @@ export const useInsertEvent = () => {
         .select()
         .eq("email", data.email)
         .single();
-      // console.log(user);
+
       for (const category of data.categories) {
         const { data: existingCategory, error: fetchError } = await supabase
           .from("event_categories")
@@ -43,7 +43,7 @@ export const useInsertEvent = () => {
       }
       delete data.categories;
       delete data.email;
-      console.log(data);
+
       const { data: newEvent, error } = await supabase
         .from("events")
         .insert({
@@ -60,9 +60,21 @@ export const useInsertEvent = () => {
           venue_name: data.venueName,
           organizer_id: user.id,
         })
+        .select()
         .single();
       if (error) {
         console.log(error);
+      }
+
+      console.log(newEvent);
+
+      for (const categoryId of categoryIds) {
+        const { error: insertError } = await supabase
+          .from("event_categories_mapping")
+          .insert([{ event_id: newEvent.id, category_id: categoryId }]);
+        if (insertError) {
+          console.log(insertError);
+        }
       }
       return newEvent;
     },

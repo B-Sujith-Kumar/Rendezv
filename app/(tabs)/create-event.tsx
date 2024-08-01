@@ -141,7 +141,6 @@ const CreateEvent = () => {
       .from("event-banners")
       .upload(filePath, decode(base64), { contentType });
 
-    console.log(data);
 
     if (data) {
       return data.path;
@@ -204,9 +203,10 @@ const CreateEvent = () => {
         onSuccess: () => {
           Alert.alert("Event created successfully");
         },
-        onError: () => {
+        onError: (err) => {
+            console.log(err);
             Alert.alert("An error occurred while creating the event");
-        }
+        },
       });
     }
   };
