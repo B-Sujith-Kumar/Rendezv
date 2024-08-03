@@ -32,11 +32,11 @@ export const useInsertEvent = () => {
             .from("event_categories")
             .insert([{ name: category.toLowerCase() }])
             .single();
-          
+
           if (insertError) {
             console.log(insertError);
           }
-          
+
           categoryId = (newCategory as any)?.id;
         }
         categoryIds.push(categoryId);
@@ -96,7 +96,25 @@ export const useEvent = (id: number) => {
       if (error) {
         console.log(error);
       }
-      return data;
+      const { data: catData, error: err } = await supabase
+        .from("event_categories_mapping")
+        .select(
+          `
+        event_id,
+        event_categories (
+          id,
+          name
+        )
+      `
+        )
+        .eq("event_id", id);
+
+      if (err) throw err;
+
+      const categories = (catData as any).map(
+        (mapping: any) => mapping.event_categories
+      );
+      return { data, categories };
     },
   });
 };
