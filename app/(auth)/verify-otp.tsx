@@ -12,6 +12,8 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import OTPTextView from "react-native-otp-textinput";
 import { useSignUp } from "@clerk/clerk-expo";
 import { supabase } from "@/lib/supabase";
+import axios from "axios";
+import { host } from "@/constants";
 
 const VerifyOTP = () => {
   let otpInput = useRef(null);
@@ -37,15 +39,16 @@ const VerifyOTP = () => {
 
       if (completeSignUp.status === "complete") {
         await setActive({ session: completeSignUp.createdSessionId });
-        const { data, error } = await supabase
-          .from("Users")
-          .insert([
-            {
-              email: signUp.emailAddress,
-              name: signUp.firstName,
-            },
-          ])
-          .select();
+        const res = await fetch(`${host}/users/create-user`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            email: signUp.emailAddress,
+            name: signUp.firstName
+          }),
+        });
         router.replace("/(tabs)");
       } else {
         return Alert.alert(

@@ -69,3 +69,5 @@ export const interests = [
 ];
 
 export const url = "https://tzuqtizdmhzesrlsqidb.supabase.co/storage/v1/object/public/event-banners/"
+
+export const host = "http://192.168.1.3:3000"

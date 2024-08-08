@@ -7,7 +7,7 @@ import {
   Share,
   ScrollView,
 } from "react-native";
-import React, { useLayoutEffect } from "react";
+import React, { useEffect, useLayoutEffect } from "react";
 import {
   router,
   Stack,

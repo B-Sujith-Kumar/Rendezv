@@ -9,9 +9,10 @@ import { useClientOnlyValue } from "@/components/useClientOnlyValue";
 import { SignedIn, SignedOut, useAuth, useUser } from "@clerk/clerk-expo";
 import { supabase } from "@/lib/supabase";
 
-import { AntDesign } from '@expo/vector-icons';
-import { Feather } from '@expo/vector-icons';
-import { MaterialIcons } from '@expo/vector-icons';
+import { AntDesign } from "@expo/vector-icons";
+import { Feather } from "@expo/vector-icons";
+import { MaterialIcons } from "@expo/vector-icons";
+import { host } from "@/constants";
 
 function TabBarIcon(props: {
   name: React.ComponentProps<typeof FontAwesome>["name"];
@@ -24,12 +25,16 @@ export default function TabLayout() {
   const colorScheme = useColorScheme();
   const { user } = useUser();
   const updateProfileImage = async () => {
-    const { data, error } = await supabase
-      .from("Users")
-      .update({ profileImage: user?.imageUrl })
-      .eq("email", user?.primaryEmailAddress?.emailAddress)
-      .is("profileImage", null)
-      .select();
+    await fetch(`${host}/users/update-user-image`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        email: user?.primaryEmailAddress?.emailAddress,
+        profileImage: user?.imageUrl,
+      }),
+    }).then((res) => console.log("Changed"));
   };
 
   useEffect(() => {
@@ -37,7 +42,7 @@ export default function TabLayout() {
   }, [user]);
 
   const { isSignedIn } = useAuth();
-  
+
   if (!isSignedIn) {
     return <Redirect href="/(auth)/sign-in" />;
   }

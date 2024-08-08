@@ -6,6 +6,7 @@ import { useOAuth } from "@clerk/clerk-expo";
 import * as Linking from "expo-linking";
 import { Fontisto } from "@expo/vector-icons";
 import { supabase } from "@/lib/supabase";
+import { host } from "@/constants";
 
 export const useWarmUpBrowser = () => {
   React.useEffect(() => {
@@ -32,16 +33,17 @@ const OAuthGoogle = () => {
 
       if (createdSessionId) {
         setActive!({ session: createdSessionId });
-        const { data, error } = await supabase
-          .from("Users")
-          .insert([
-            {
-              email: signUp?.emailAddress,
-              name: signUp?.firstName + " " + signUp?.lastName,
-            },
-          ])
-          .select();
-          console.log(data);
+        const res = await fetch(`${host}/users/create-user`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            email: signUp?.emailAddress,
+            name: signUp?.firstName + (signUp?.lastName ? " " + signUp?.lastName : ""),
+          }),
+        });
+        console.log(res);
       } else {
         console.error("OAuth flow was not completed");
       }
@@ -51,12 +53,12 @@ const OAuthGoogle = () => {
   }, []);
 
   return (
-      <TouchableOpacity style={styles.socialLogin} onPress={onPress}>
-        <Fontisto name="google" size={24} color="white" />
-        <Text style={{ color: "white", fontSize: 18, fontFamily: "FontBold" }}>
-          Continue with Google
-        </Text>
-      </TouchableOpacity>
+    <TouchableOpacity style={styles.socialLogin} onPress={onPress}>
+      <Fontisto name="google" size={24} color="white" />
+      <Text style={{ color: "white", fontSize: 18, fontFamily: "FontBold" }}>
+        Continue with Google
+      </Text>
+    </TouchableOpacity>
   );
 };
 
