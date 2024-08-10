@@ -20,8 +20,10 @@ import { url } from "@/constants";
 import Animated, {
   interpolate,
   useAnimatedRef,
+  useAnimatedScrollHandler,
   useAnimatedStyle,
   useScrollViewOffset,
+  useSharedValue,
 } from "react-native-reanimated";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import {
@@ -34,12 +36,16 @@ import { getUser } from "@/api/user";
 import MapView, { Marker } from "react-native-maps";
 
 const EventPage = () => {
+  const scrollRef = useAnimatedRef<Animated.ScrollView>();
+  const scrollOffset = useSharedValue(0);
+
+  const scrollHandler = useAnimatedScrollHandler((event) => {
+    scrollOffset.value = event.contentOffset.y;
+  });
+
   const { id: idString } = useLocalSearchParams();
   const id = typeof idString === "string" ? idString : idString![0];
   const { data: event, isLoading, error } = useEvent(id);
-  console.log(event);
-  const scrollRef = useAnimatedRef<Animated.ScrollView>();
-  const scrollOffset = useScrollViewOffset(scrollRef);
   const imageAnimatedStyle = useAnimatedStyle(() => {
     return {
       transform: [
@@ -79,6 +85,7 @@ const EventPage = () => {
   return (
     <Animated.ScrollView
       ref={scrollRef}
+      onScroll={scrollHandler}
       scrollEventThrottle={16}
       showsVerticalScrollIndicator={false}
     >
