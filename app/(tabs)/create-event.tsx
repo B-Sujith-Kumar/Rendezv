@@ -252,7 +252,7 @@ const CreateEvent = () => {
               Fill in the details to create an event
             </Text>
             <Link
-              href={`/(events)/event/6`}
+              href={`/(events)/event/66b776cc7a0297bdc3f527ef`}
               style={{
                 color: "gray",
                 fontFamily: "FontMedium",

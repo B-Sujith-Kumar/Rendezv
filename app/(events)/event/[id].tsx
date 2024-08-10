@@ -35,11 +35,9 @@ import MapView, { Marker } from "react-native-maps";
 
 const EventPage = () => {
   const { id: idString } = useLocalSearchParams();
-  const id = parseFloat(typeof idString === "string" ? idString : idString![0]);
+  const id = typeof idString === "string" ? idString : idString![0];
   const { data: event, isLoading, error } = useEvent(id);
-  const { data: organizer, isLoading: organizerLoading } = getUser(
-    event?.data.organizer_id
-  );
+  console.log(event);
   const scrollRef = useAnimatedRef<Animated.ScrollView>();
   const scrollOffset = useScrollViewOffset(scrollRef);
   const imageAnimatedStyle = useAnimatedStyle(() => {
@@ -62,15 +60,15 @@ const EventPage = () => {
   const shareEvent = async () => {
     try {
       Share.share({
-        title: event?.data.title,
-        message: event?.data.description,
+        title: event.title,
+        message: event.description,
       });
     } catch (error: any) {
       alert(error.message);
     }
   };
 
-  if (isLoading || organizerLoading) {
+  if (isLoading) {
     return (
       <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
         <ActivityIndicator />
@@ -121,7 +119,7 @@ const EventPage = () => {
       <View>
         <Animated.Image
           source={{
-            uri: url + event?.data.banner,
+            uri: url + event.banner,
           }}
           style={[styles.image, imageAnimatedStyle]}
         />
@@ -165,7 +163,7 @@ const EventPage = () => {
               fontSize: 28,
             }}
           >
-            {event?.data.title}
+            {event.title}
           </Text>
           <View>
             <View
@@ -177,7 +175,7 @@ const EventPage = () => {
               }}
             >
               <Image
-                source={{ uri: organizer.profileImage }}
+                source={{ uri: event.organizer_id.profileImage }}
                 width={45}
                 height={45}
                 resizeMode="cover"
@@ -191,7 +189,7 @@ const EventPage = () => {
                     fontSize: 16,
                   }}
                 >
-                  {organizer.name}
+                  {event.organizer_id.name}
                 </Text>
                 <Text
                   style={{
@@ -221,7 +219,7 @@ const EventPage = () => {
                     fontFamily: "FontSemiBold",
                   }}
                 >
-                  {event?.data.date_time.split(",")[0]}
+                  {event?.dateField.split(",")[0]}
                 </Text>
                 <Text
                   style={{
@@ -230,7 +228,7 @@ const EventPage = () => {
                     fontFamily: "FontRegular",
                   }}
                 >
-                  {event?.data.date_time.split(",")[1]} Onwards
+                  {event?.dateField.split(",")[1]} Onwards
                 </Text>
               </View>
             </View>
@@ -251,7 +249,7 @@ const EventPage = () => {
                     fontFamily: "FontSemiBold",
                   }}
                 >
-                  {event?.data.venue_name}
+                  {event?.venueName}
                 </Text>
                 <Text
                   style={{
@@ -260,7 +258,7 @@ const EventPage = () => {
                     fontFamily: "FontRegular",
                   }}
                 >
-                  {event?.data.date_time.split(",")[1]} Onwards
+                  {event?.dateField.split(",")[1]} Onwards
                 </Text>
               </View>
             </View>
@@ -268,16 +266,16 @@ const EventPage = () => {
               <MapView
                 style={{ width: "100%", height: 120, borderRadius: 25 }}
                 initialRegion={{
-                  latitude: event?.data.location.latitude,
-                  longitude: event?.data.location.longitude,
+                  latitude: event.venue.latitude,
+                  longitude: event?.venue.longitude,
                   latitudeDelta: 0.0922,
                   longitudeDelta: 0.0421,
                 }}
               >
                 <Marker
                   coordinate={{
-                    latitude: event?.data.location.latitude,
-                    longitude: event?.data.location.longitude,
+                    latitude: event.venue.latitude,
+                    longitude: event?.venue.longitude,
                   }}
                   onPress={(data) => console.log(data.nativeEvent.coordinate)}
                 />
@@ -298,7 +296,7 @@ const EventPage = () => {
                   lineHeight: 25,
                 }}
               >
-                {event?.data.description}
+                {event.description}
               </Text>
             </View>
           </View>

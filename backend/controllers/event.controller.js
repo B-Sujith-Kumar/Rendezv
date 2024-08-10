@@ -34,3 +34,17 @@ export const createEvent = async (req, res) => {
         res.status(500).json({ message: error.message, success: false });
     }
 }
+
+export const getEvent = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const event = await Event.findById(id).populate('categories').populate('organizer_id');
+        if (!event) {
+            return res.status(404).json({ message: "Event not found", success: false });
+        }
+        res.status(200).json({ event, success: true });
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({ message: error.message, success: false });
+    }
+}

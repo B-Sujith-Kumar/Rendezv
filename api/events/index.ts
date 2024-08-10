@@ -1,7 +1,7 @@
 import User from "@/backend/models/user.model";
 import { host } from "@/constants";
-import { supabase } from "@/lib/supabase";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import axios from "axios";
 
 export const useInsertEvent = () => {
   const queryClient = useQueryClient();
@@ -28,37 +28,12 @@ export const useInsertEvent = () => {
   });
 };
 
-export const useEvent = (id: number) => {
+export const useEvent = (id: string) => {
   return useQuery({
     queryKey: ["events"],
     queryFn: async () => {
-      const { data, error } = await supabase
-        .from("events")
-        .select()
-        .eq("id", id)
-        .single();
-      if (error) {
-        console.log(error);
-      }
-      const { data: catData, error: err } = await supabase
-        .from("event_categories_mapping")
-        .select(
-          `
-        event_id,
-        event_categories (
-          id,
-          name
-        )
-      `
-        )
-        .eq("event_id", id);
-
-      if (err) throw err;
-
-      const categories = (catData as any).map(
-        (mapping: any) => mapping.event_categories
-      );
-      return { data, categories };
+        const res = await axios.get(`${host}/events/get-event/${id}`);
+        return res.data.event;
     },
   });
 };
