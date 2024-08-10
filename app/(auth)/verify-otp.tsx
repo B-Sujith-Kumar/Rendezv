@@ -46,7 +46,8 @@ const VerifyOTP = () => {
           },
           body: JSON.stringify({
             email: signUp.emailAddress,
-            name: signUp.firstName
+            name: signUp.firstName,
+            clerkId: signUp.id,
           }),
         });
         router.replace("/(tabs)");

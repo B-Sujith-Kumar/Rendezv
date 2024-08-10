@@ -33,8 +33,9 @@ export default function TabLayout() {
       body: JSON.stringify({
         email: user?.primaryEmailAddress?.emailAddress,
         profileImage: user?.imageUrl,
+        clerkId: user?.id
       }),
-    }).then((res) => console.log("Changed"));
+    }).catch((err) => console.error("What the fuck", err));
   };
 
   useEffect(() => {

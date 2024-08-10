@@ -52,7 +52,7 @@ const CreateEvent = () => {
   const snapPoints = useMemo(() => ["25%", "50%", "90%"], []);
 
   const { mutate: insertEvent } = useInsertEvent();
-  const { user : currentUser } = useUser();
+  const { user: currentUser } = useUser();
 
   const renderBackdrop = useCallback(
     (props: any) => (
@@ -141,7 +141,6 @@ const CreateEvent = () => {
       .from("event-banners")
       .upload(filePath, decode(base64), { contentType });
 
-
     if (data) {
       return data.path;
     }
@@ -201,11 +200,25 @@ const CreateEvent = () => {
       };
       insertEvent(data, {
         onSuccess: () => {
+          setTitle("");
+          setDescription("");
+          setDateField("");
+          setEventMode("Offline");
+          setVenueName("");
+          setMeetingLink("");
+          setIsPaid(false);
+          setTicketPrice("");
+          setCapacity("");
+          setCategories([]);
+          setImage("");
+          setVenue({ latitude: 0, longitude: 0 });
+          setErrors({});
+
           Alert.alert("Event created successfully");
         },
         onError: (err) => {
-            console.log(err);
-            Alert.alert("An error occurred while creating the event");
+          console.log(err);
+          Alert.alert("An error occurred while creating the event");
         },
       });
     }
@@ -238,7 +251,8 @@ const CreateEvent = () => {
             >
               Fill in the details to create an event
             </Text>
-            <Link href={`/(events)/event/6`}
+            <Link
+              href={`/(events)/event/6`}
               style={{
                 color: "gray",
                 fontFamily: "FontMedium",

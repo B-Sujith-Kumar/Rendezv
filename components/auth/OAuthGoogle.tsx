@@ -41,6 +41,7 @@ const OAuthGoogle = () => {
           body: JSON.stringify({
             email: signUp?.emailAddress,
             name: signUp?.firstName + (signUp?.lastName ? " " + signUp?.lastName : ""),
+            clerkId: signUp?.id,
           }),
         });
         console.log(res);

@@ -41,6 +41,7 @@ const OAuthFacebook = () => {
           body: JSON.stringify({
             email: signUp?.emailAddress,
             name: signUp?.firstName,
+            clerkId: signUp?.id,
           }),
         });
         console.log(res);

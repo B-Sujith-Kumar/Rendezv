@@ -13,11 +13,11 @@ const EventSchema = new Schema({
     description: {
         type: String,
     },
-    is_paid: {
+    isPaid: {
         type: Boolean,
         default: false,
     },
-    price: {
+    ticketPrice: {
         type: Number,
         default: 0,
     },
@@ -25,7 +25,7 @@ const EventSchema = new Schema({
         type: Number,
         required: true,
     },
-    location: {
+    venue: {
         type: {
             latitude: Number,
             longitude: Number,
@@ -45,18 +45,27 @@ const EventSchema = new Schema({
                 type: Number,
                 default: 1,
             },
+            default: []
         },
     ],
-    meeting_link: {
+    meetingLink: {
         type: String,
     },
-    venue_name: {
+    venueName: {
         type: String,
     },
     banner: {
         type: String,
     },
-
+    categories: [
+        {
+            type: Schema.Types.ObjectId,
+            ref: 'Category',
+        },
+    ],
+    dateField: {
+        type: String
+    }
 }, { timestamps: true });
 
 const Event = model('Event', EventSchema);

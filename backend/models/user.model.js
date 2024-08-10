@@ -1,6 +1,11 @@
 import { Schema, model } from 'mongoose';
 
 const UserSchema = new Schema({
+    clerkId: {
+        type: String,
+        required: true,
+        unique: true,
+    },
     email: {
         type: String,
         required: true,
@@ -33,6 +38,15 @@ const UserSchema = new Schema({
     },
     following: {
         type: [Schema.Types.ObjectId, { ref: 'User', default: [] }],
+    },
+    events: {
+        type: [Schema.Types.ObjectId, { ref: 'Event', default: [] }],
+    },
+    favorite_categories: {
+        type: [Schema.Types.ObjectId, { ref: 'Category', default: [] }],
+    },
+    favorite_events: {
+        type: [Schema.Types.ObjectId, { ref: 'Event', default: [] }],
     },
 }, { timestamps: true });
 

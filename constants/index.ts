@@ -35,7 +35,8 @@ export const events = [
     date: "25 AUG, 2024",
     day: "Friday",
     location: "Island Resort",
-    banner: "https://t4.ftcdn.net/jpg/00/33/39/55/360_F_33395539_4xFpEgutjCeeiMdwXfkDFf7yiXcP0RVu.jpg",
+    banner:
+      "https://t4.ftcdn.net/jpg/00/33/39/55/360_F_33395539_4xFpEgutjCeeiMdwXfkDFf7yiXcP0RVu.jpg",
   },
   {
     title: "React Native Conference",
@@ -44,30 +45,32 @@ export const events = [
     day: "Friday",
     location: "Expo Center",
     banner: "https://wallpapercave.com/wp/wp4923981.jpg",
-  }
+  },
 ];
 
-export const imgUrl = "https://images.pexels.com/photos/2747449/pexels-photo-2747449.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2";
+export const imgUrl =
+  "https://images.pexels.com/photos/2747449/pexels-photo-2747449.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2";
 
 export const interests = [
-    {
-        name: "Arts",
-        icon: "paint-brush",
-    },
-    {
-        name: "Music",
-        icon: "music",
-    },
-    {
-        name: "Technology",
-        icon: "laptop",
-    },
-    {
-        name: "Sports",
-        icon: "futbol",
-    },
+  {
+    name: "Arts",
+    icon: "paint-brush",
+  },
+  {
+    name: "Music",
+    icon: "music",
+  },
+  {
+    name: "Technology",
+    icon: "laptop",
+  },
+  {
+    name: "Sports",
+    icon: "futbol",
+  },
 ];
 
-export const url = "https://tzuqtizdmhzesrlsqidb.supabase.co/storage/v1/object/public/event-banners/"
+export const url =
+  "https://tzuqtizdmhzesrlsqidb.supabase.co/storage/v1/object/public/event-banners/";
 
-export const host = "http://192.168.1.3:3000"
+export const host = "http://192.168.1.3:3000";
