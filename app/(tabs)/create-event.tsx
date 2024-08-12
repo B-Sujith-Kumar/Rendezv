@@ -10,7 +10,7 @@ import {
   Image,
 } from "react-native";
 import React, { useCallback, useMemo } from "react";
-import { Link, Stack } from "expo-router";
+import { Link, router, Stack } from "expo-router";
 import { SafeAreaView } from "react-native-safe-area-context";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import { Entypo, EvilIcons, FontAwesome } from "@expo/vector-icons";
@@ -198,7 +198,7 @@ const CreateEvent = () => {
         venue,
         email: currentUser?.primaryEmailAddress?.emailAddress,
       };
-      insertEvent(data, {
+      const res : any = insertEvent(data, {
         onSuccess: () => {
           setTitle("");
           setDescription("");
@@ -213,7 +213,6 @@ const CreateEvent = () => {
           setImage("");
           setVenue({ latitude: 0, longitude: 0 });
           setErrors({});
-
           Alert.alert("Event created successfully");
         },
         onError: (err) => {
@@ -251,18 +250,6 @@ const CreateEvent = () => {
             >
               Fill in the details to create an event
             </Text>
-            <Link
-              href={`/(events)/event/66b776cc7a0297bdc3f527ef`}
-              style={{
-                color: "gray",
-                fontFamily: "FontMedium",
-                fontSize: 16,
-                marginTop: 10,
-                alignSelf: "center",
-              }}
-            >
-              Click here
-            </Link>
             <View style={{ marginTop: 25 }}>
               <Text style={styles.title}>Title</Text>
               <TextInput

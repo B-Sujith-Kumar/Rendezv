@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
 import { Link, Redirect, Tabs } from "expo-router";
 import { Pressable } from "react-native";
@@ -7,7 +7,7 @@ import Colors from "@/constants/Colors";
 import { useColorScheme } from "@/components/useColorScheme";
 import { useClientOnlyValue } from "@/components/useClientOnlyValue";
 import { SignedIn, SignedOut, useAuth, useUser } from "@clerk/clerk-expo";
-import { supabase } from "@/lib/supabase";
+import * as Location from "expo-location";
 
 import { AntDesign } from "@expo/vector-icons";
 import { Feather } from "@expo/vector-icons";
@@ -24,6 +24,7 @@ function TabBarIcon(props: {
 export default function TabLayout() {
   const colorScheme = useColorScheme();
   const { user } = useUser();
+
   const updateProfileImage = async () => {
     await fetch(`${host}/users/update-user-image`, {
       method: "POST",
@@ -35,7 +36,7 @@ export default function TabLayout() {
         profileImage: user?.imageUrl,
         clerkId: user?.id
       }),
-    }).catch((err) => console.error("What the fuck", err));
+    }).catch((err) => console.error(err));
   };
 
   useEffect(() => {

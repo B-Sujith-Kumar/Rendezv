@@ -108,7 +108,7 @@ const EventPage = () => {
             </View>
           ),
           headerLeft: () => (
-            <View style={{ paddingVertical: 15 }}>
+            <View style={{ paddingVertical: 5 }}>
               <TouchableOpacity
                 onPress={() => router.back()}
                 style={styles.iconStyle}
@@ -239,55 +239,59 @@ const EventPage = () => {
                 </Text>
               </View>
             </View>
-            <View
-              style={{
-                marginTop: 30,
-                flexDirection: "row",
-                gap: 10,
-                alignItems: "center",
-              }}
-            >
-              <SimpleLineIcons name="location-pin" size={18} color="gray" />
-              <View style={{ gap: 6 }}>
-                <Text
-                  style={{
-                    color: "white",
-                    fontSize: 16,
-                    fontFamily: "FontSemiBold",
-                  }}
-                >
-                  {event?.venueName}
-                </Text>
-                <Text
-                  style={{
-                    color: "gray",
-                    fontSize: 13,
-                    fontFamily: "FontRegular",
-                  }}
-                >
-                  {event?.dateField.split(",")[1]} Onwards
-                </Text>
-              </View>
-            </View>
-            <View style={{ marginTop: 25, borderRadius: 25 }}>
-              <MapView
-                style={{ width: "100%", height: 120, borderRadius: 25 }}
-                initialRegion={{
-                  latitude: event.venue.latitude,
-                  longitude: event?.venue.longitude,
-                  latitudeDelta: 0.0922,
-                  longitudeDelta: 0.0421,
+            {!event.is_online && (
+              <View
+                style={{
+                  marginTop: 30,
+                  flexDirection: "row",
+                  gap: 10,
+                  alignItems: "center",
                 }}
               >
-                <Marker
-                  coordinate={{
+                <SimpleLineIcons name="location-pin" size={18} color="gray" />
+                <View style={{ gap: 6 }}>
+                  <Text
+                    style={{
+                      color: "white",
+                      fontSize: 16,
+                      fontFamily: "FontSemiBold",
+                    }}
+                  >
+                    {event?.venueName}
+                  </Text>
+                  <Text
+                    style={{
+                      color: "gray",
+                      fontSize: 13,
+                      fontFamily: "FontRegular",
+                    }}
+                  >
+                    {event?.dateField.split(",")[1]} Onwards
+                  </Text>
+                </View>
+              </View>
+            )}
+            {!event.is_online && (
+              <View style={{ marginTop: 25, borderRadius: 25 }}>
+                <MapView
+                  style={{ width: "100%", height: 120, borderRadius: 25 }}
+                  initialRegion={{
                     latitude: event.venue.latitude,
                     longitude: event?.venue.longitude,
+                    latitudeDelta: 0.0922,
+                    longitudeDelta: 0.0421,
                   }}
-                  onPress={(data) => console.log(data.nativeEvent.coordinate)}
-                />
-              </MapView>
-            </View>
+                >
+                  <Marker
+                    coordinate={{
+                      latitude: event.venue.latitude,
+                      longitude: event?.venue.longitude,
+                    }}
+                    onPress={(data) => console.log(data.nativeEvent.coordinate)}
+                  />
+                </MapView>
+              </View>
+            )}
             <View style={{ marginTop: 25 }}>
               <Text
                 style={{ color: "white", fontFamily: "FontBold", fontSize: 20 }}
@@ -328,7 +332,8 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     gap: 18,
     alignItems: "center",
-    paddingVertical: 15,
+    paddingVertical: 10,
+    // backgroundColor: "black"
   },
   category: {
     borderWidth: 1,

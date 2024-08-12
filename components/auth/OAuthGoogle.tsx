@@ -7,6 +7,8 @@ import * as Linking from "expo-linking";
 import { Fontisto } from "@expo/vector-icons";
 import { supabase } from "@/lib/supabase";
 import { host } from "@/constants";
+import axios from "axios";
+import useUserStore from "@/store/userStore";
 
 export const useWarmUpBrowser = () => {
   React.useEffect(() => {
@@ -23,6 +25,7 @@ const OAuthGoogle = () => {
   useWarmUpBrowser();
 
   const { startOAuthFlow } = useOAuth({ strategy: "oauth_google" });
+  const { setUser } = useUserStore();
 
   const onPress = React.useCallback(async () => {
     try {
@@ -40,11 +43,19 @@ const OAuthGoogle = () => {
           },
           body: JSON.stringify({
             email: signUp?.emailAddress,
-            name: signUp?.firstName + (signUp?.lastName ? " " + signUp?.lastName : ""),
+            name:
+              signUp?.firstName +
+              (signUp?.lastName ? " " + signUp?.lastName : ""),
             clerkId: signUp?.id,
           }),
         });
-        console.log(res);
+
+        const response = await axios.post(`${host}/users/get-user`, {
+          email: signUp?.emailAddress,
+        });
+        setUser(response.data);
+        const updatedUser = useUserStore.getState().user;
+        console.log("user: ", updatedUser);
       } else {
         console.error("OAuth flow was not completed");
       }

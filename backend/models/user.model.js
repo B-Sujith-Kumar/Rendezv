@@ -48,6 +48,16 @@ const UserSchema = new Schema({
     favorite_events: {
         type: [Schema.Types.ObjectId, { ref: 'Event', default: [] }],
     },
+    location: {
+        type: {
+            latitude: Number,
+            longitude: Number,
+        },
+    },
+    city: {
+        type: String,
+        default: '',
+    }
 }, { timestamps: true });
 
 const User = model('User', UserSchema);

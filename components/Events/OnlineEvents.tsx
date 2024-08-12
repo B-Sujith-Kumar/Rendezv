@@ -1,11 +1,13 @@
-import { View, Text, FlatList } from 'react-native'
-import React from 'react'
-import { AntDesign } from '@expo/vector-icons'
-import { events } from '@/constants'
-import EventItem from '../EventItem/EventItem'
-import HorizontalEventCard from '../EventItem/HorizontalEventCard'
+import { View, Text, FlatList } from "react-native";
+import React from "react";
+import { AntDesign } from "@expo/vector-icons";
+import { events } from "@/constants";
+import EventItem from "../EventItem/EventItem";
+import HorizontalEventCard from "../EventItem/HorizontalEventCard";
+import { useOnlineEvents } from "@/api/events";
 
 const OnlineEvents = () => {
+  const { isLoading, data: events, error } = useOnlineEvents();
   return (
     <View style={{ marginTop: 15, paddingBottom: 20 }}>
       <View
@@ -34,10 +36,10 @@ const OnlineEvents = () => {
         scrollEnabled={true}
         horizontal
         showsHorizontalScrollIndicator={false}
-        contentContainerStyle={{ gap: 20}}
+        contentContainerStyle={{ gap: 20 }}
       />
     </View>
-  )
-}
+  );
+};
 
-export default OnlineEvents
+export default OnlineEvents;

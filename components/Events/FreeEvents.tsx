@@ -1,11 +1,20 @@
-import { View, Text, FlatList } from 'react-native'
-import React from 'react'
-import { AntDesign } from '@expo/vector-icons'
-import { events } from '@/constants'
-import EventItem from '../EventItem/EventItem'
-import HorizontalEventCard from '../EventItem/HorizontalEventCard'
+import { View, Text, FlatList, ActivityIndicator } from "react-native";
+import React, { useEffect, useState } from "react";
+import { AntDesign } from "@expo/vector-icons";
+import EventItem from "../EventItem/EventItem";
+import HorizontalEventCard from "../EventItem/HorizontalEventCard";
+import { useFreeEvents } from "@/api/events";
+import { Link } from "expo-router";
 
 const FreeEvents = () => {
+  const { isLoading, data: events, error } = useFreeEvents();
+  if (isLoading) {
+    return (
+      <View>
+        <ActivityIndicator size="large" color="white" />
+      </View>
+    );
+  }
   return (
     <View style={{ marginTop: 15, paddingBottom: 20 }}>
       <View
@@ -34,10 +43,10 @@ const FreeEvents = () => {
         scrollEnabled={true}
         horizontal
         showsHorizontalScrollIndicator={false}
-        contentContainerStyle={{ gap: 20}}
+        contentContainerStyle={{ gap: 20 }}
       />
     </View>
-  )
-}
+  );
+};
 
-export default FreeEvents
+export default FreeEvents;

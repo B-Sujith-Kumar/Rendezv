@@ -23,7 +23,6 @@ export const createEvent = async (req, res) => {
         }
         delete data.email;
         delete data.categories;
-        console.log(data);
         const event = await Event.create({ ...data, categories: category, organizer_id: user._id });
         for (const cat of category) {
             await Category.findByIdAndUpdate(cat, { $push: { events: event._id } });
@@ -46,5 +45,25 @@ export const getEvent = async (req, res) => {
     } catch (error) {
         console.log(error);
         res.status(500).json({ message: error.message, success: false });
+    }
+}
+
+export const getFreeEvents = async (req, res) => {
+    try {
+        const events = await Event.find({ isPaid: false }).populate('categories').populate('organizer_id');
+        res.status(200).json({ events });
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({ message: error.message });
+    }
+}
+
+export const getOnlineEvents = async (req, res) => {
+    try {
+        const events = await Event.find({ is_online: true }).populate('categories').populate('organizer_id');
+        res.status(200).json({ events });
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({ message: error.message });
     }
 }

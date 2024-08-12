@@ -89,6 +89,7 @@ function RootLayoutNav() {
           <QueryProvider>
             <Stack>
               <Stack.Screen name="(auth)" options={{ headerShown: false }} />
+              <Stack.Screen name="(events)/event/[id]" options={{ }} />
               <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
             </Stack>
           </QueryProvider>

@@ -14,6 +14,9 @@ import { FontAwesome5 } from "@expo/vector-icons";
 import OAuthGoogle from "@/components/auth/OAuthGoogle";
 import OAuthFacebook from "@/components/auth/OAuthFacebook";
 import { SignedIn, SignedOut, useAuth, useSignIn } from "@clerk/clerk-expo";
+import axios from "axios";
+import { host } from "@/constants";
+import useUserStore from "@/store/userStore";
 
 const SignIn = () => {
   const { signIn, setActive, isLoaded } = useSignIn();
@@ -21,6 +24,7 @@ const SignIn = () => {
   const [password, setPassword] = React.useState("");
   const [showPassword, setShowPassword] = React.useState(false);
   const [loading, setLoading] = React.useState(false);
+  const { user, setUser } = useUserStore();
 
   const { isSignedIn } = useAuth();
   if (isSignedIn) {
@@ -43,6 +47,10 @@ const SignIn = () => {
 
       if (signInAttempt.status === "complete") {
         await setActive({ session: signInAttempt.createdSessionId });
+        const res = await axios.post(`${host}/users/get-user`, {
+          email: emailAddress,
+        });
+        setUser(res.data);
         router.replace("/(tabs)");
       } else {
         console.log(JSON.stringify(signInAttempt, null, 2));

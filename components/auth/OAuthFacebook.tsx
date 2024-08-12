@@ -44,7 +44,6 @@ const OAuthFacebook = () => {
             clerkId: signUp?.id,
           }),
         });
-        console.log(res);
       } else {
         console.error("OAuth flow was not completed");
       }

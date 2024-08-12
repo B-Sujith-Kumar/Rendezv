@@ -10,18 +10,21 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { AntDesign } from "@expo/vector-icons";
 import { Fontisto } from "@expo/vector-icons";
 import { Ionicons } from "@expo/vector-icons";
+import { Link } from "expo-router";
 
 const HomeHeader = () => {
   return (
     <View style={styles.container}>
-      <View style={styles.locationContainer}>
-        <Text
-          style={{ fontSize: 20, fontFamily: "FontMedium", color: "white" }}
-        >
-          Kochi
-        </Text>
-        <AntDesign name="right" size={16} color="white" />
-      </View>
+      <Link href="/location">
+        <View style={styles.locationContainer}>
+          <Text
+            style={{ fontSize: 20, fontFamily: "FontMedium", color: "white" }}
+          >
+            Kochi
+          </Text>
+          <AntDesign name="right" size={16} color="white" />
+        </View>
+      </Link>
       <View style={styles.iconContainer}>
         <TouchableOpacity
           style={{
