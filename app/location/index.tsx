@@ -47,6 +47,7 @@ const Page = () => {
           });
         })();
       }
+
       setLoading(false);
     };
     getLocation();
@@ -69,8 +70,18 @@ const Page = () => {
         email: user?.emailAddresses[0].emailAddress,
       });
       setEnableConfirm(false);
+      Toast.show({
+        type: "success",
+        text1: "Success",
+        text2: "Location updated successfully",
+      });
     } catch (error) {
       console.log(error);
+      Toast.show({
+        type: "error",
+        text1: "Error",
+        text2: "An error occured while updating location",
+      });
     }
   };
 
