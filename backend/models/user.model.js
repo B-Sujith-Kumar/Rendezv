@@ -53,6 +53,7 @@ const UserSchema = new Schema({
             latitude: Number,
             longitude: Number,
         },
+        default: null,
     },
     city: {
         type: String,

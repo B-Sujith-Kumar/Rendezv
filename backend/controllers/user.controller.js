@@ -41,7 +41,6 @@ export const updateUserImage = async (req, res) => {
 export const getUser = async (req, res) => {
     try {
         const { email } = req.body;
-        console.log(email);
         const user = await User.findOne({ email });
         res.status(200).json(user);
     }
@@ -53,7 +52,6 @@ export const getUser = async (req, res) => {
 export const updateLocation = async (req, res) => {
     try {
         const { email, userLocation, city } = req.body;
-        console.log(email, userLocation, city);
         const user = await User.findOne({ email });
         user.location = userLocation;
         user.city = city;
