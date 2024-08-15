@@ -12,7 +12,7 @@ import { Fontisto } from "@expo/vector-icons";
 import { Ionicons } from "@expo/vector-icons";
 import { Link } from "expo-router";
 
-const HomeHeader = () => {
+const HomeHeader = ({ city }: { city: string }) => {
   return (
     <View style={styles.container}>
       <Link href="/location">
@@ -20,7 +20,7 @@ const HomeHeader = () => {
           <Text
             style={{ fontSize: 20, fontFamily: "FontMedium", color: "white" }}
           >
-            Kochi
+            {city}
           </Text>
           <AntDesign name="right" size={16} color="white" />
         </View>

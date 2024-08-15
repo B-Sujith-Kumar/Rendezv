@@ -9,13 +9,14 @@ import { Text, View } from "@/components/Themed";
 import { Redirect, Stack } from "expo-router";
 import { SignedOut, useAuth, useUser } from "@clerk/clerk-expo";
 import HomeHeader from "@/components/Header/HomeHeader";
-import { tabs } from "@/constants";
-import { useRef, useState } from "react";
+import { host, tabs } from "@/constants";
+import { useEffect, useRef, useState } from "react";
 import * as Haptics from "expo-haptics";
 import PopularEvents from "@/components/Events/PopularEvents";
 import { SafeAreaView } from "react-native-safe-area-context";
 import OnlineEvents from "@/components/Events/OnlineEvents";
 import FreeEvents from "@/components/Events/FreeEvents";
+import axios from "axios";
 
 export default function TabOneScreen() {
   const { isSignedIn } = useAuth();
@@ -23,6 +24,7 @@ export default function TabOneScreen() {
   const itemsRef = useRef<Array<TouchableOpacity | null>>([]);
   const scrollRef = useRef<ScrollView | null>(null);
   const [activeIndex, setActiveIndex] = useState(0);
+  const [city, setCity] = useState("");
   if (!isSignedIn) {
     return <Redirect href="/(auth)/sign-in" />;
   }
@@ -34,6 +36,17 @@ export default function TabOneScreen() {
     });
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Soft);
   };
+
+  useEffect(() => {
+    const fetchCity = async () => {
+        const response = await axios.post(`${host}/users/get-city`, {
+            email: user?.emailAddresses[0].emailAddress,
+        })
+        setCity(response.data.city)
+    }
+    fetchCity()
+  }, [])
+
   return (
     <>
       <Stack.Screen
@@ -50,7 +63,7 @@ export default function TabOneScreen() {
         }}
       >
         <ScrollView showsVerticalScrollIndicator={false}>
-          <HomeHeader />
+          <HomeHeader city={city} />
           <View style={{ flex: 1, marginTop: 20 }}>
             <View style={styles.container}>
               <Text style={styles.title}>

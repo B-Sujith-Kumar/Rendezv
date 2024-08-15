@@ -62,3 +62,16 @@ export const updateLocation = async (req, res) => {
         return res.status(500).json({ message: "Something went wrong" });
     }
 }
+
+export const getCity = async (req, res) => {
+    try {
+        const { email } = req.body;
+        const user = await User.findOne({ email });
+        if (!user) {
+            return res.status(404).json({ message: "User not found" });
+        }
+        return res.status(200).json({ city: user.city });
+    } catch (error) {
+        
+    }
+}
