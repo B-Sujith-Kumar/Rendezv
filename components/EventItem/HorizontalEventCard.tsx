@@ -256,7 +256,6 @@ const HorizontalEventCard = ({ event }: { event: any }) => {
         eventId: event._id.toString(),
         email: user?.emailAddresses[0].emailAddress,
       });
-      console.log("API response:", res.data);
       if (res.data.success) {
         if (res.data.removed) {
           removeFavoriteEvent(event._id.toString());

@@ -1,14 +1,54 @@
 import { View, Text, Image, Dimensions, Pressable } from "react-native";
-import React from "react";
-import { url } from "@/constants";
+import React, { useEffect, useState } from "react";
+import { host, url } from "@/constants";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import { Ionicons, MaterialIcons, SimpleLineIcons } from "@expo/vector-icons";
 import { Link } from "expo-router";
+import axios from "axios";
+import useUserStore from "@/store/userStore";
+import { useUser } from "@clerk/clerk-expo";
 
 const EventListItem = ({ event }: { event: any }) => {
   if (event.is_online) {
     return;
   }
+
+  const { user } = useUser();
+  const {
+    user: currentUser,
+    removeFavoriteEvent,
+    addFavoriteEvent,
+  } = useUserStore();
+  const [isFav, setIsFav] = useState<boolean>(false);
+
+  useEffect(() => {
+    if (currentUser) {
+      const isFavorite = currentUser.favorite_events?.some(
+        (favEvent) => favEvent._id.toString() === event._id.toString()
+      );
+      setIsFav(isFavorite || false);
+    }
+  }, [currentUser, event]);
+
+  const handleFavorite = async () => {
+    try {
+      const res = await axios.post(`${host}/users/add-favorite`, {
+        eventId: event._id.toString(),
+        email: user?.emailAddresses[0].emailAddress,
+      });
+      if (res.data.success) {
+        if (res.data.removed) {
+          removeFavoriteEvent(event._id.toString());
+          setIsFav(false);
+        } else {
+          addFavoriteEvent(event);
+          setIsFav(true);
+        }
+      }
+    } catch (error) {
+      console.log("API error:", error);
+    }
+  };
 
   return (
     <Link href={`/(events)/event/${event._id.toString()}`} asChild>
@@ -67,19 +107,35 @@ const EventListItem = ({ event }: { event: any }) => {
                 ? event.title
                 : event.title.slice(0, 26) + "..."}
             </Text>
-            <TouchableOpacity>
-              <MaterialIcons
-                name="favorite-border"
-                size={18}
-                color="#dfdfdf"
-                style={{
-                  borderWidth: 1.5,
-                  borderColor: "#3c3c3c",
-                  padding: 10,
-                  borderRadius: 13,
-                }}
-              />
-            </TouchableOpacity>
+            {!isFav ? (
+              <TouchableOpacity onPress={handleFavorite}>
+                <MaterialIcons
+                  name="favorite-border"
+                  size={18}
+                  color="#dfdfdf"
+                  style={{
+                    borderWidth: 1.5,
+                    borderColor: "#3c3c3c",
+                    padding: 10,
+                    borderRadius: 13,
+                  }}
+                />
+              </TouchableOpacity>
+            ) : (
+              <TouchableOpacity onPress={handleFavorite}>
+                <MaterialIcons
+                  name="favorite"
+                  size={18}
+                  color="red"
+                  style={{
+                    borderWidth: 1.5,
+                    borderColor: "#3c3c3c",
+                    padding: 10,
+                    borderRadius: 13,
+                  }}
+                />
+              </TouchableOpacity>
+            )}
           </View>
           {event.venueName && (
             <View

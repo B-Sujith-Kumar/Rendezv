@@ -7,7 +7,7 @@ import {
   Share,
   ScrollView,
 } from "react-native";
-import React, { useEffect, useLayoutEffect } from "react";
+import React, { useEffect, useLayoutEffect, useState } from "react";
 import {
   router,
   Stack,
@@ -16,7 +16,7 @@ import {
 } from "expo-router";
 import { useEvent } from "@/api/events";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { url } from "@/constants";
+import { host, url } from "@/constants";
 import Animated, {
   interpolate,
   useAnimatedRef,
@@ -34,10 +34,40 @@ import {
 } from "@expo/vector-icons";
 import { getUser } from "@/api/user";
 import MapView, { Marker } from "react-native-maps";
+import { useUser } from "@clerk/clerk-expo";
+import useUserStore from "@/store/userStore";
+import axios from "axios";
 
 const EventPage = () => {
   const scrollRef = useAnimatedRef<Animated.ScrollView>();
   const scrollOffset = useSharedValue(0);
+  const { user } = useUser();
+  const {
+    user: currentUser,
+    removeFavoriteEvent,
+    addFavoriteEvent,
+  } = useUserStore();
+  const [isFav, setIsFav] = useState<boolean>(false);
+
+  const handleFavorite = async () => {
+    try {
+      const res = await axios.post(`${host}/users/add-favorite`, {
+        eventId: event._id.toString(),
+        email: user?.emailAddresses[0].emailAddress,
+      });
+      if (res.data.success) {
+        if (res.data.removed) {
+          removeFavoriteEvent(event._id.toString());
+          setIsFav(false);
+        } else {
+          addFavoriteEvent(event);
+          setIsFav(true);
+        }
+      }
+    } catch (error) {
+      console.log("API error:", error);
+    }
+  };
 
   const scrollHandler = useAnimatedScrollHandler((event) => {
     scrollOffset.value = event.contentOffset.y;
@@ -62,6 +92,15 @@ const EventPage = () => {
       ],
     };
   });
+
+  useEffect(() => {
+    if (currentUser) {
+      const isFavorite = currentUser.favorite_events?.some(
+        (favEvent) => favEvent._id.toString() === event._id.toString()
+      );
+      setIsFav(isFavorite || false);
+    }
+  }, [currentUser, event]);
 
   const shareEvent = async () => {
     try {
@@ -96,12 +135,25 @@ const EventPage = () => {
 
           headerRight: () => (
             <View style={styles.headerView}>
-              <TouchableOpacity
-                onPress={() => router.back()}
-                style={styles.iconStyle}
-              >
-                <MaterialIcons name="favorite-border" size={24} color="black" />
-              </TouchableOpacity>
+              {!isFav ? (
+                <TouchableOpacity
+                  onPress={handleFavorite}
+                  style={styles.iconStyle}
+                >
+                  <MaterialIcons
+                    name="favorite-border"
+                    size={24}
+                    color="black"
+                  />
+                </TouchableOpacity>
+              ) : (
+                <TouchableOpacity
+                  onPress={handleFavorite}
+                  style={styles.iconStyle}
+                >
+                  <MaterialIcons name="favorite" size={24} color="black" />
+                </TouchableOpacity>
+              )}
               <TouchableOpacity onPress={shareEvent} style={styles.iconStyle}>
                 <AntDesign name="sharealt" size={24} color="black" />
               </TouchableOpacity>
