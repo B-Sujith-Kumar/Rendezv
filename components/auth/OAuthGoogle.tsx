@@ -54,8 +54,6 @@ const OAuthGoogle = () => {
           email: signUp?.emailAddress,
         });
         setUser(response.data);
-        const updatedUser = useUserStore.getState().user;
-        console.log("user: ", updatedUser);
       } else {
         console.error("OAuth flow was not completed");
       }

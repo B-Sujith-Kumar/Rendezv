@@ -42,12 +42,16 @@ const UserSchema = new Schema({
     events: {
         type: [Schema.Types.ObjectId, { ref: 'Event', default: [] }],
     },
-    favorite_categories: {
-        type: [Schema.Types.ObjectId, { ref: 'Category', default: [] }],
-    },
-    favorite_events: {
-        type: [Schema.Types.ObjectId, { ref: 'Event', default: [] }],
-    },
+    favorite_categories:[{
+        type: Schema.Types.ObjectId,
+        ref: 'Category',
+        default: [],
+    }],
+    favorite_events: [{
+        type: Schema.Types.ObjectId,
+        ref: 'Event',
+        default: [],
+    }],
     location: {
         type: {
             latitude: Number,

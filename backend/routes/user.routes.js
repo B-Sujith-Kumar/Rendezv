@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { createUser, getCity, getUser, updateLocation, updateUserImage } from "../controllers/user.controller.js";
+import { addFavorite, createUser, getCity, getUser, updateLocation, updateUserImage } from "../controllers/user.controller.js";
 
 const router = Router();
 
@@ -12,5 +12,7 @@ router.post("/get-user", getUser);
 router.post("/update-location", updateLocation);
 
 router.post("/get-city", getCity);
+
+router.post("/add-favorite", addFavorite);
 
 export default router;

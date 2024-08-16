@@ -1,4 +1,5 @@
 import { Schema } from "mongoose";
+import { Types } from 'mongoose';
 
 export interface TokenCache {
   getToken: (key: string) => Promise<string | undefined | null>;
@@ -6,24 +7,62 @@ export interface TokenCache {
   clearToken?: (key: string) => void;
 }
 
-export interface User {
-    _id: Schema.Types.ObjectId | null;
-    clerkId: string;
-    email: string;
-    name: string;
-    profileImage: string;
-    bio?: string;
-    socialLinks?: { name: string; url: string }[];
-    friends?: User[];
-    followers?: User[];
-    following?: User[];
-    events?: Schema.Types.ObjectId[];
-    favorite_categories?: Schema.Types.ObjectId[];
-    favorite_events?: Schema.Types.ObjectId[];
+
+interface ISocialLink {
+  name: string;
+  url: string;
 }
 
+interface ILocation {
+  latitude: number;
+  longitude: number;
+}
+
+export interface IUser {
+  clerkId: string;
+  email: string;
+  name: string;
+  profileImage?: string;
+  bio?: string;
+  social_links?: ISocialLink[];
+  friends?: Types.ObjectId[];
+  followers?: Types.ObjectId[];
+  following?: Types.ObjectId[];
+  events?: Types.ObjectId[];
+  favorite_categories?: Types.ObjectId[];
+  favorite_events?: IEvent[];
+  location?: ILocation | null;
+  city?: string;
+  createdAt?: Date;
+  updatedAt?: Date;
+}
+  
+  export interface IBooking {
+    user_id: Types.ObjectId;
+    quantity?: number;
+  }
+  
+  export interface IEvent {
+    organizer_id: Types.ObjectId;
+    title: string;
+    description?: string;
+    isPaid?: boolean;
+    ticketPrice?: number;
+    capacity: number;
+    venue?: ILocation;
+    is_online?: boolean;
+    bookings?: IBooking[];
+    meetingLink?: string;
+    venueName?: string;
+    banner?: string;
+    categories?: Types.ObjectId[];
+    dateField?: string;
+    createdAt?: Date;
+    updatedAt?: Date;
+  }
+
+
 export interface UserStore {
-    user: User | null;
-    setUser: (newUser: User) => void;
-    removeUser: () => void;
+    user: IUser | null;
+    setUser: (newUser: IUser) => void;
 }

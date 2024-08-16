@@ -1,11 +1,29 @@
-import { View, Text, Image, StyleSheet, TouchableOpacity, Pressable } from "react-native";
+import {
+  View,
+  Text,
+  Image,
+  StyleSheet,
+  TouchableOpacity,
+  Pressable,
+} from "react-native";
 import React from "react";
 import { Ionicons, MaterialIcons } from "@expo/vector-icons";
 import { SimpleLineIcons } from "@expo/vector-icons";
-import { url } from "@/constants";
+import { host, url } from "@/constants";
 import { Link } from "expo-router";
+import axios from "axios";
+import { useUser } from "@clerk/clerk-expo";
 
 const HorizontalEventCard = ({ event }: { event: any }) => {
+  const { user } = useUser();
+  const handleFavorite = async () => {
+    try {
+      const res = await axios.post(`${host}/users/add-favorite`, {
+        eventId: event._id.toString(),
+        email: user?.emailAddresses[0].emailAddress,
+      });
+    } catch (error) {}
+  };
   return (
     <Link href={`/(events)/event/${event._id.toString()}`} asChild>
       <Pressable style={styles.container}>
@@ -71,7 +89,7 @@ const HorizontalEventCard = ({ event }: { event: any }) => {
                 ? event.title
                 : event.title.slice(0, 15) + "..."}
             </Text>
-            <TouchableOpacity>
+            <TouchableOpacity onPress={handleFavorite}>
               <MaterialIcons
                 name="favorite-border"
                 size={24}

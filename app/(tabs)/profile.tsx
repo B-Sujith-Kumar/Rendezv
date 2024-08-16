@@ -21,6 +21,7 @@ import { imgUrl, interests } from "@/constants";
 import { FontAwesome } from "@expo/vector-icons";
 import { MaterialIcons } from "@expo/vector-icons";
 import BottomSheet from "@gorhom/bottom-sheet";
+import useUserStore from "@/store/userStore";
 
 const Profile = () => {
   const { signOut } = useAuth();
@@ -52,11 +53,17 @@ const Profile = () => {
     );
   }
 
+  const handlePress = () => {
+    useUserStore.setState({ user: null });
+    console.log(useUserStore.getState().user);
+    signOut();
+  };
+
   const handleSignOut = async () => {
     Alert.alert("Are you sure you want to sign out?", "", [
       {
         text: "Yes",
-        onPress: () => signOut(),
+        onPress: () => handlePress(),
         style: "destructive",
       },
       {

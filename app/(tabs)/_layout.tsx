@@ -13,6 +13,9 @@ import { AntDesign } from "@expo/vector-icons";
 import { Feather } from "@expo/vector-icons";
 import { MaterialIcons } from "@expo/vector-icons";
 import { host } from "@/constants";
+import axios from "axios";
+import { useStore } from "zustand";
+import useUserStore from "@/store/userStore";
 
 function TabBarIcon(props: {
   name: React.ComponentProps<typeof FontAwesome>["name"];
@@ -34,13 +37,23 @@ export default function TabLayout() {
       body: JSON.stringify({
         email: user?.primaryEmailAddress?.emailAddress,
         profileImage: user?.imageUrl,
-        clerkId: user?.id
+        clerkId: user?.id,
       }),
     }).catch((err) => console.error(err));
   };
 
   useEffect(() => {
     user && updateProfileImage();
+  }, [user]);
+
+  useEffect(() => {
+    (async () => {
+      const newUser = await axios.post(`${host}/users/get-user`, {
+        email: user?.primaryEmailAddress?.emailAddress,
+      });
+      useUserStore.setState({ user: newUser.data });
+      console.log(useUserStore.getState().user);
+    })();
   }, [user]);
 
   const { isSignedIn } = useAuth();

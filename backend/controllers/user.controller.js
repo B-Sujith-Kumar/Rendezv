@@ -1,5 +1,6 @@
 import User from "../models/user.model.js";
 import { clerkClient } from "@clerk/clerk-sdk-node";
+import Event from "../models/event.model.js";
 
 export const createUser = async (req, res) => {
     try {
@@ -41,10 +42,12 @@ export const updateUserImage = async (req, res) => {
 export const getUser = async (req, res) => {
     try {
         const { email } = req.body;
-        const user = await User.findOne({ email });
+        const user = await User.findOne({ email }).populate("favorite_events");
+        console.log(user);
         res.status(200).json(user);
     }
     catch (error) {
+        console.log(error);
         res.status(500).json({ message: "Something went wrong" });
     }
 }
@@ -72,6 +75,28 @@ export const getCity = async (req, res) => {
         }
         return res.status(200).json({ city: user.city });
     } catch (error) {
-        
+
+    }
+}
+
+export const addFavorite = async (req, res) => {
+    try {
+        const { email, eventId } = req.body;
+        const user = await User.findOne({ email });
+        const event = await Event.findById(eventId);
+        if (!user) {
+            return res.status(404).json({ message: "User not found" });
+        }
+        if (user.favorite_events.includes(event._id)) {
+            user.favorite_events = user.favorite_events.filter((id) => id.toString() !== eventId.toString());
+        } else {
+            user.favorite_events.push(event._id);
+        }
+        await user.save();
+        return res.status(200).json({ data: user });
+
+    } catch (error) {
+        console.log(error);
+        return res.status(500).json({ message: "Something went wrong" });
     }
 }
