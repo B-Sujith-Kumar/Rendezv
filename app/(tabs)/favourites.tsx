@@ -5,9 +5,10 @@ import {
   ScrollView,
   Image,
   StyleSheet,
+  Pressable,
 } from "react-native";
 import React, { useEffect } from "react";
-import { Stack } from "expo-router";
+import { Link, Stack } from "expo-router";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Feather, MaterialIcons } from "@expo/vector-icons";
 import useUserStore from "@/store/userStore";
@@ -19,6 +20,7 @@ import { TouchableOpacity } from "react-native-gesture-handler";
 
 const Favourites = () => {
   const { user } = useUser();
+  const [search, setSearch] = React.useState("");
   const {
     user: currentUser,
     removeFavoriteEvent,
@@ -31,6 +33,20 @@ const Favourites = () => {
   useEffect(() => {
     setFilteredEvents(currentUser?.favorite_events);
   }, [currentUser, currentUser?.favorite_events]);
+
+  //   useEffect(() => {
+  //     if (search === "") {
+  //       setFilteredEvents(currentUser?.favorite_events);
+  //     } else {
+  //       setFilteredEvents(
+  //         currentUser?.favorite_events?.filter((event) =>
+  //           event.title.toLowerCase().includes(search.toLowerCase())
+  //         )
+  //       );
+  //     }
+  //   }, [search]);
+
+  const handleChange = () => {};
 
   const handleFavorite = async (event: IEvent) => {
     try {
@@ -74,72 +90,86 @@ const Favourites = () => {
           <TextInput
             placeholder="Search events..."
             style={{ color: "white", fontFamily: "FontSemiBold", fontSize: 16 }}
-            maxLength={30}
+            value={search}
+            onChangeText={(text) => {
+              setSearch(text);
+              if (text.trim() === "") {
+                setFilteredEvents(currentUser?.favorite_events);
+              } else {
+                setFilteredEvents(
+                  currentUser?.favorite_events?.filter((event) =>
+                    event.title.toLowerCase().includes(text.toLowerCase())
+                  )
+                );
+              }
+            }}
           />
         </View>
         <ScrollView style={{ height: "100%" }}>
           {filterdEvents?.map((event: IEvent, index) => (
-            <View>
-              <View
-                style={{
-                  flexDirection: "row",
-                  marginTop: 20,
-                  width: "100%",
-                  gap: 15,
-                }}
-                key={index}
-              >
-                <View>
-                  <Image
-                    source={{ uri: url + event.banner }}
-                    style={styles.imgStyle}
-                  />
-                </View>
-                <View style={{ flex: 1, gap: 10, paddingVertical: 10 }}>
-                  <Text
-                    style={{
-                      color: "white",
-                      fontFamily: "FontBold",
-                      fontSize: 18,
-                    }}
-                  >
-                    {event.title}
-                  </Text>
-                  <Text style={styles.subText}>
-                    {event.dateField?.split(",")[0]}
-                  </Text>
-                  {!event.is_online && (
-                    <Text style={styles.subText}>{event.venueName}</Text>
-                  )}
-                  {event.is_online && (
-                    <Text style={styles.subText}>Online</Text>
-                  )}
-                </View>
-                <View>
-                  <TouchableOpacity
-                    style={{ marginVertical: "100%" }}
-                    onPress={() => handleFavorite(event)}
-                  >
-                    <MaterialIcons
-                      name="favorite"
-                      size={18}
-                      color="#ff4e4f"
-                      style={styles.iconStyle}
-                    />
-                  </TouchableOpacity>
-                </View>
-              </View>
-              {index !== filterdEvents.length - 1 && (
+            <Link href={`/(events)/event/${event._id.toString()}`} asChild>
+              <Pressable>
                 <View
                   style={{
-                    borderBottomWidth: 1,
-                    borderBottomColor: "#3a3a3a",
-                    width: "100%",
+                    flexDirection: "row",
                     marginTop: 20,
+                    width: "100%",
+                    gap: 15,
                   }}
-                ></View>
-              )}
-            </View>
+                  key={index}
+                >
+                  <View>
+                    <Image
+                      source={{ uri: url + event.banner }}
+                      style={styles.imgStyle}
+                    />
+                  </View>
+                  <View style={{ flex: 1, gap: 10, paddingVertical: 10 }}>
+                    <Text
+                      style={{
+                        color: "white",
+                        fontFamily: "FontBold",
+                        fontSize: 18,
+                      }}
+                    >
+                      {event.title}
+                    </Text>
+                    <Text style={styles.subText}>
+                      {event.dateField?.split(",")[0]}
+                    </Text>
+                    {!event.is_online && (
+                      <Text style={styles.subText}>{event.venueName}</Text>
+                    )}
+                    {event.is_online && (
+                      <Text style={styles.subText}>Online</Text>
+                    )}
+                  </View>
+                  <View>
+                    <TouchableOpacity
+                      style={{ marginVertical: "100%" }}
+                      onPress={() => handleFavorite(event)}
+                    >
+                      <MaterialIcons
+                        name="favorite"
+                        size={18}
+                        color="#ff4e4f"
+                        style={styles.iconStyle}
+                      />
+                    </TouchableOpacity>
+                  </View>
+                </View>
+                {index !== filterdEvents.length - 1 && (
+                  <View
+                    style={{
+                      borderBottomWidth: 1,
+                      borderBottomColor: "#3a3a3a",
+                      width: "100%",
+                      marginTop: 20,
+                    }}
+                  ></View>
+                )}
+              </Pressable>
+            </Link>
           ))}
         </ScrollView>
       </View>
