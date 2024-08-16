@@ -67,3 +67,13 @@ export const getOnlineEvents = async (req, res) => {
         res.status(500).json({ message: error.message });
     }
 }
+
+export const getEvents = async (req, res) => {
+    try {
+        const events = await Event.find().populate('categories').populate('organizer_id');
+        res.status(200).json({ events });
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({ message: error.message });
+    }
+}

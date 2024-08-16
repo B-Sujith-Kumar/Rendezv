@@ -57,7 +57,8 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     backgroundColor: "black",
-    marginTop: 15,
+    paddingVertical: 0,
+    marginTop: 10,
   },
   locationContainer: {
     flexDirection: "row",

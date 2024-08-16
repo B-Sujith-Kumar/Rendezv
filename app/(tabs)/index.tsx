@@ -2,11 +2,12 @@ import {
   Pressable,
   ScrollView,
   StyleSheet,
+  Touchable,
   TouchableOpacity,
 } from "react-native";
 
 import { Text, View } from "@/components/Themed";
-import { Redirect, Stack } from "expo-router";
+import { Redirect, router, Stack } from "expo-router";
 import { SignedOut, useAuth, useUser } from "@clerk/clerk-expo";
 import HomeHeader from "@/components/Header/HomeHeader";
 import { host, tabs } from "@/constants";
@@ -17,6 +18,8 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import OnlineEvents from "@/components/Events/OnlineEvents";
 import FreeEvents from "@/components/Events/FreeEvents";
 import axios from "axios";
+import { Entypo, Ionicons } from "@expo/vector-icons";
+import ListingsMap from "@/components/Map/ListingsMap";
 
 export default function TabOneScreen() {
   const { isSignedIn } = useAuth();
@@ -39,13 +42,13 @@ export default function TabOneScreen() {
 
   useEffect(() => {
     const fetchCity = async () => {
-        const response = await axios.post(`${host}/users/get-city`, {
-            email: user?.emailAddresses[0].emailAddress,
-        })
-        setCity(response.data.city)
-    }
-    fetchCity()
-  }, [])
+      const response = await axios.post(`${host}/users/get-city`, {
+        email: user?.emailAddresses[0].emailAddress,
+      });
+      setCity(response.data.city);
+    };
+    fetchCity();
+  }, []);
 
   return (
     <>
@@ -110,6 +113,15 @@ export default function TabOneScreen() {
             </View>
           </View>
         </ScrollView>
+        <View style={styles.absoluteBtn}>
+          <TouchableOpacity
+            style={styles.mapBtn}
+            onPress={() => router.push("/(events)/listings-map")}
+          >
+            <Entypo name="map" size={16} color="white" />
+            <Text style={{ fontFamily: "FontBold" }}>Map view</Text>
+          </TouchableOpacity>
+        </View>
       </SafeAreaView>
     </>
   );
@@ -157,5 +169,21 @@ const styles = StyleSheet.create({
   tabTextActive: {
     color: "black",
     fontFamily: "FontSemiBold",
+  },
+  absoluteBtn: {
+    position: "absolute",
+    bottom: 30,
+    width: "100%",
+    alignItems: "center",
+    backgroundColor: "",
+  },
+  mapBtn: {
+    flexDirection: "row",
+    gap: 8,
+    padding: 10,
+    paddingHorizontal: 20,
+    borderRadius: 20,
+    alignItems: "center",
+    backgroundColor: "#121212",
   },
 });

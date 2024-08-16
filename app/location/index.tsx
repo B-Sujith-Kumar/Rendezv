@@ -74,6 +74,8 @@ const Page = () => {
         type: "success",
         text1: "Success",
         text2: "Location updated successfully",
+        position: "top",
+        topOffset: 65,
       });
     } catch (error) {
       console.log(error);
