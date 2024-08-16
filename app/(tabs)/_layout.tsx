@@ -52,7 +52,6 @@ export default function TabLayout() {
         email: user?.primaryEmailAddress?.emailAddress,
       });
       useUserStore.setState({ user: newUser.data });
-      console.log(useUserStore.getState().user);
     })();
   }, [user]);
 

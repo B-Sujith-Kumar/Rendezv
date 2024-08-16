@@ -55,7 +55,6 @@ const Profile = () => {
 
   const handlePress = () => {
     useUserStore.setState({ user: null });
-    console.log(useUserStore.getState().user);
     signOut();
   };
 

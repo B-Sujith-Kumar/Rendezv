@@ -43,6 +43,7 @@ export interface IUser {
   }
   
   export interface IEvent {
+    _id: Types.ObjectId;
     organizer_id: Types.ObjectId;
     title: string;
     description?: string;
@@ -65,4 +66,7 @@ export interface IUser {
 export interface UserStore {
     user: IUser | null;
     setUser: (newUser: IUser) => void;
+    removeUser: () => void;
+    addFavoriteEvent: (event: IEvent) => void;
+    removeFavoriteEvent: (eventId: string) => void;
 }
