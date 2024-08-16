@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View } from "react-native";
+import { ActivityIndicator, StyleSheet, Text, View } from "react-native";
 import React, { useEffect, useState } from "react";
 import ListingsMap from "@/components/Map/ListingsMap";
 import axios from "axios";
@@ -11,13 +11,23 @@ import EventListView from "@/components/EventItem/EventListView";
 
 const ListMap = () => {
   const [events, setEvents] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [scrollIndex, setScrollIndex] = useState(0);
   useEffect(() => {
     const getAllEvents = async () => {
       const res = await axios.get(`${host}/events/get-events`);
       setEvents(res.data.events);
+      setLoading(false);
     };
     getAllEvents();
   }, []);
+  if (loading) {
+    return (
+      <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
+        <ActivityIndicator size="large" color="white" />
+      </View>
+    );
+  }
   return (
     <View style={{ flex: 1 }}>
       <Stack.Screen
@@ -43,19 +53,29 @@ const ListMap = () => {
         }}
       />
       <MapView style={styles.map}>
-        {events.map((event: any) => (
-          !event.is_online && <Marker
-            key={event._id.toString()}
-            coordinate={{
-              latitude: event.venue.latitude,
-              longitude: event.venue.longitude
-            }}
-          >
-          </Marker>
-        ))}
+        {events.map(
+          (event: any, index) =>
+            !event.is_online && (
+              <Marker
+                key={event._id.toString()}
+                coordinate={{
+                  latitude: event.venue.latitude,
+                  longitude: event.venue.longitude,
+                }}
+                
+                onPress={() => {
+                  setScrollIndex(index);
+                }}
+              ></Marker>
+            )
+        )}
       </MapView>
       <View style={styles.eventListContainer}>
-        <EventListView events={events} />
+        <EventListView
+          events={events}
+          scrollIndex={scrollIndex}
+          setScrollIndex={setScrollIndex}
+        />
       </View>
     </View>
   );
@@ -77,10 +97,10 @@ const styles = StyleSheet.create({
     borderRadius: 25,
     marginLeft: 10,
   },
-  eventListContainer : {
+  eventListContainer: {
     position: "absolute",
     bottom: 30,
     zIndex: 10,
     width: "100%",
-  }
+  },
 });
