@@ -1,4 +1,11 @@
-import { View, Text, Image, Dimensions, Pressable } from "react-native";
+import {
+  View,
+  Text,
+  Image,
+  Dimensions,
+  Pressable,
+  ActivityIndicator,
+} from "react-native";
 import React, { useEffect, useState } from "react";
 import { host, url } from "@/constants";
 import { TouchableOpacity } from "react-native-gesture-handler";
@@ -20,13 +27,20 @@ const EventListItem = ({ event }: { event: any }) => {
     addFavoriteEvent,
   } = useUserStore();
   const [isFav, setIsFav] = useState<boolean>(false);
+  const [loading, setLoading] = useState<boolean>(false);
 
   useEffect(() => {
     if (currentUser) {
-      const isFavorite = currentUser.favorite_events?.some(
-        (favEvent) => favEvent._id.toString() === event._id.toString()
-      );
+      setLoading(true);
+      let isFavorite = false;
+      console.log(currentUser.favorite_events);
+      if (currentUser.favorite_events) {
+        isFavorite = currentUser.favorite_events?.some(
+          (favEvent) => favEvent._id.toString() === event._id.toString()
+        );
+      }
       setIsFav(isFavorite || false);
+      setLoading(false);
     }
   }, [currentUser, event]);
 
@@ -49,6 +63,14 @@ const EventListItem = ({ event }: { event: any }) => {
       console.log("API error:", error);
     }
   };
+
+  if (loading) {
+    return (
+      <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
+        <ActivityIndicator size="large" color="white" />
+      </View>
+    );
+  }
 
   return (
     <Link href={`/(events)/event/${event._id.toString()}`} asChild>

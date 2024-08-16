@@ -43,7 +43,6 @@ export const getUser = async (req, res) => {
     try {
         const { email } = req.body;
         const user = await User.findOne({ email }).populate("favorite_events");
-        console.log(user);
         res.status(200).json(user);
     }
     catch (error) {

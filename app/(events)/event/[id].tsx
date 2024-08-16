@@ -42,6 +42,7 @@ const EventPage = () => {
   const scrollRef = useAnimatedRef<Animated.ScrollView>();
   const scrollOffset = useSharedValue(0);
   const { user } = useUser();
+  const [loading, setLoading] = useState(false);
   const {
     user: currentUser,
     removeFavoriteEvent,
@@ -95,10 +96,15 @@ const EventPage = () => {
 
   useEffect(() => {
     if (currentUser) {
-      const isFavorite = currentUser.favorite_events?.some(
-        (favEvent) => favEvent._id.toString() === event._id.toString()
-      );
+      setLoading(true);
+      let isFavorite = false;
+      if (currentUser.favorite_events) {
+        isFavorite = currentUser.favorite_events?.some(
+          (favEvent) => favEvent._id?.toString()  === event._id.toString()
+        );
+      }
       setIsFav(isFavorite || false);
+      setLoading(false);
     }
   }, [currentUser, event]);
 
@@ -114,6 +120,13 @@ const EventPage = () => {
   };
 
   if (isLoading) {
+    return (
+      <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
+        <ActivityIndicator />
+      </View>
+    );
+  }
+  if (loading) {
     return (
       <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
         <ActivityIndicator />
