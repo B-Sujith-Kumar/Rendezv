@@ -10,6 +10,8 @@ import axios from "axios";
 import { host } from "@/constants";
 import { useUser } from "@clerk/clerk-expo";
 import Toast from "react-native-toast-message";
+import useUserStore from "@/store/userStore";
+import { ILocation } from "@/types";
 
 const Page = () => {
   const [userLocation, setUserLocation] = useState<{
@@ -19,6 +21,7 @@ const Page = () => {
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
   const [enableConfirm, setEnableConfirm] = useState<boolean>(false);
+  const { user: currentUser, updateUser } = useUserStore();
   const { user } = useUser();
 
   useEffect(() => {
@@ -70,6 +73,8 @@ const Page = () => {
         email: user?.emailAddresses[0].emailAddress,
       });
       setEnableConfirm(false);
+      useUserStore.setState({ userLocation });
+      useUserStore.setState({ userCity: res.data.city });
       Toast.show({
         type: "success",
         text1: "Success",

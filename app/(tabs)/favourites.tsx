@@ -34,20 +34,6 @@ const Favourites = () => {
     setFilteredEvents(currentUser?.favorite_events);
   }, [currentUser, currentUser?.favorite_events]);
 
-  //   useEffect(() => {
-  //     if (search === "") {
-  //       setFilteredEvents(currentUser?.favorite_events);
-  //     } else {
-  //       setFilteredEvents(
-  //         currentUser?.favorite_events?.filter((event) =>
-  //           event.title.toLowerCase().includes(search.toLowerCase())
-  //         )
-  //       );
-  //     }
-  //   }, [search]);
-
-  const handleChange = () => {};
-
   const handleFavorite = async (event: IEvent) => {
     try {
       const res = await axios.post(`${host}/users/add-favorite`, {
@@ -107,7 +93,11 @@ const Favourites = () => {
         </View>
         <ScrollView style={{ height: "100%" }}>
           {filterdEvents?.map((event: IEvent, index) => (
-            <Link href={`/(events)/event/${event._id.toString()}`} asChild>
+            <Link
+              href={`/(events)/event/${event._id.toString()}`}
+              key={index}
+              asChild
+            >
               <Pressable>
                 <View
                   style={{

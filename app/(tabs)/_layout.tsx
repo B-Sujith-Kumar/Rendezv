@@ -52,6 +52,10 @@ export default function TabLayout() {
         email: user?.primaryEmailAddress?.emailAddress,
       });
       useUserStore.setState({ user: newUser.data });
+      useUserStore.setState({ location: newUser.data.location });
+      useUserStore.setState({ city: newUser.data.city });
+      useUserStore.setState({ userCity: newUser.data.city });
+      useUserStore.setState({ userLocation: newUser.data.location });
     })();
   }, [user]);
 
@@ -85,7 +89,7 @@ export default function TabLayout() {
             }}
           />
           <Tabs.Screen
-            name="two"
+            name="explore"
             options={{
               title: "Explore",
               tabBarLabelStyle: { fontFamily: "FontRegular" },

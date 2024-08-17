@@ -5,6 +5,11 @@ const useUserStore = create<UserStore>((set) => ({
   user: null,
   setUser: (newUser: IUser) => set((state) => ({ user: newUser })),
   removeUser: () => set((state) => ({ user: null })),
+  updateUser: (newUser: IUser) => set((state) => ({ user: newUser })),
+  userCity: null,
+  userLocation: null,
+  location: null,
+  city: null,
   addFavoriteEvent: (event: IEvent) =>
     set((state) => {
       if (state.user) {

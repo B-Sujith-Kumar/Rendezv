@@ -12,7 +12,7 @@ interface ISocialLink {
   url: string;
 }
 
-interface ILocation {
+export interface ILocation {
   latitude: number;
   longitude: number;
 }
@@ -73,6 +73,11 @@ export interface UserStore {
   user: IUser | null;
   setUser: (newUser: IUser) => void;
   removeUser: () => void;
+  updateUser: (newUser: IUser) => void;
+  userCity: string | null;
+  userLocation: ILocation | null;
+  location: ILocation | null;
+  city: string | null;
   addFavoriteEvent: (event: IEvent) => void;
   removeFavoriteEvent: (eventId: string) => void;
 }

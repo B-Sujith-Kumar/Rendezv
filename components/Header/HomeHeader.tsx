@@ -12,7 +12,8 @@ import { Fontisto } from "@expo/vector-icons";
 import { Ionicons } from "@expo/vector-icons";
 import { Link } from "expo-router";
 
-const HomeHeader = ({ city }: { city: string }) => {
+const HomeHeader = ({ city }: { city: string | null }) => {
+
   return (
     <View style={styles.container}>
       <Link href="/location">

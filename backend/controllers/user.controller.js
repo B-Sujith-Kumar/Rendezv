@@ -57,8 +57,11 @@ export const updateLocation = async (req, res) => {
         const user = await User.findOne({ email });
         user.location = userLocation;
         user.city = city;
+        if (city === "Secunderabad") {
+            user.city = "Hyderabad";
+        }
         await user.save();
-        return res.status(200).json({ data: user });
+        return res.status(200).json({ user, city: user.city });
     }
     catch (error) {
         return res.status(500).json({ message: "Something went wrong" });

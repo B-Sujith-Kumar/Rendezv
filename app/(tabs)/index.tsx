@@ -20,6 +20,7 @@ import FreeEvents from "@/components/Events/FreeEvents";
 import axios from "axios";
 import { Entypo, Ionicons } from "@expo/vector-icons";
 import ListingsMap from "@/components/Map/ListingsMap";
+import useUserStore from "@/store/userStore";
 
 export default function TabOneScreen() {
   const { isSignedIn } = useAuth();
@@ -27,7 +28,9 @@ export default function TabOneScreen() {
   const itemsRef = useRef<Array<TouchableOpacity | null>>([]);
   const scrollRef = useRef<ScrollView | null>(null);
   const [activeIndex, setActiveIndex] = useState(0);
-  const [city, setCity] = useState("");
+  const { user: currentUser, userCity } = useUserStore();
+  const [city, setCity] = useState<string | null>(currentUser?.city!);
+
   if (!isSignedIn) {
     return <Redirect href="/(auth)/sign-in" />;
   }
@@ -41,14 +44,14 @@ export default function TabOneScreen() {
   };
 
   useEffect(() => {
-    const fetchCity = async () => {
-      const response = await axios.post(`${host}/users/get-city`, {
-        email: user?.emailAddresses[0].emailAddress,
-      });
-      setCity(response.data.city);
-    };
-    fetchCity();
-  }, []);
+    setCity(currentUser?.city!);
+  }, [currentUser?.city!, currentUser, city]);
+
+  const fetchCity = async () => {
+    const response = await axios.post(`${host}/users/get-city`, {
+      email: user?.emailAddresses[0].emailAddress,
+    });
+  };
 
   return (
     <>
@@ -66,7 +69,7 @@ export default function TabOneScreen() {
         }}
       >
         <ScrollView showsVerticalScrollIndicator={false}>
-          <HomeHeader city={city} />
+          <HomeHeader city={userCity} />
           <View style={{ flex: 1, marginTop: 20 }}>
             <View style={styles.container}>
               <Text style={styles.title}>
