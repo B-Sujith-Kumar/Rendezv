@@ -1,15 +1,14 @@
 import { ScrollView, StyleSheet } from "react-native";
 
-import EditScreenInfo from "@/components/EditScreenInfo";
 import { Text, View } from "@/components/Themed";
 import { Link, Stack } from "expo-router";
 import { SafeAreaView } from "react-native-safe-area-context";
 import useUserStore from "@/store/userStore";
-import { FontAwesome } from "@expo/vector-icons";
 import ExploreMap from "@/components/Map/ExploreMap";
 
 export default function TabTwoScreen() {
-  const { city } = useUserStore();
+  const { city, user } = useUserStore();
+
   return (
     <SafeAreaView edges={["top"]} style={styles.container}>
       <ScrollView>
@@ -40,11 +39,10 @@ export default function TabTwoScreen() {
                   fontFamily: "FontSemiBold",
                 }}
               >
-                {" "}
+            {" "}
                 {city}
                 {"  "}
               </Text>
-              {/* <FontAwesome name="pencil-square-o" size={15} color="cyan" /> */}
             </Link>
           </View>
           <ExploreMap />

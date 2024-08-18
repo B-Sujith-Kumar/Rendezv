@@ -29,6 +29,7 @@ import { TouchableOpacity } from "react-native-gesture-handler";
 import {
   AntDesign,
   EvilIcons,
+  Ionicons,
   MaterialIcons,
   SimpleLineIcons,
 } from "@expo/vector-icons";
@@ -95,13 +96,16 @@ const EventPage = () => {
   });
 
   useEffect(() => {
-    if (currentUser) {
+    if (currentUser && currentUser.favorite_events) {
       setLoading(true);
       let isFavorite = false;
       if (currentUser.favorite_events) {
-        isFavorite = currentUser.favorite_events?.some(
-          (favEvent) => favEvent._id?.toString()  === event._id.toString()
-        );
+        isFavorite =
+          currentUser.favorite_events &&
+          event &&
+          currentUser.favorite_events?.some(
+            (favEvent) => favEvent._id?.toString() === event._id.toString()
+          );
       }
       setIsFav(isFavorite || false);
       setLoading(false);
@@ -127,6 +131,14 @@ const EventPage = () => {
     );
   }
   if (loading) {
+    return (
+      <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
+        <ActivityIndicator />
+      </View>
+    );
+  }
+
+  if (!event) {
     return (
       <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
         <ActivityIndicator />
@@ -339,7 +351,7 @@ const EventPage = () => {
             {!event.is_online && (
               <View style={{ marginTop: 25, borderRadius: 25 }}>
                 <MapView
-                  style={{ width: "100%", height: 120, borderRadius: 25 }}
+                  style={{ width: "100%", height: 150, borderRadius: 25 }}
                   initialRegion={{
                     latitude: event.venue.latitude,
                     longitude: event?.venue.longitude,
@@ -355,6 +367,30 @@ const EventPage = () => {
                     onPress={(data) => console.log(data.nativeEvent.coordinate)}
                   />
                 </MapView>
+              </View>
+            )}
+            {event.is_online && (
+              <View
+                style={{
+                  marginTop: 30,
+                  flexDirection: "row",
+                  gap: 10,
+                  paddingLeft: 3,
+                  alignItems: "center",
+                }}
+              >
+                <Ionicons name="laptop-outline" size={18} color="#959595" />
+                <View style={{ gap: 6 }}>
+                  <Text
+                    style={{
+                      color: "white",
+                      fontSize: 16,
+                      fontFamily: "FontBold",
+                    }}
+                  >
+                    Online event
+                  </Text>
+                </View>
               </View>
             )}
             <View style={{ marginTop: 25 }}>

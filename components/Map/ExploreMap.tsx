@@ -41,7 +41,7 @@ const ExploreMap = () => {
 
   return (
     <View style={{ marginTop: 20 }}>
-      {events && (
+      {events.length > 0 && (
         <MapView
           style={{ height: 180, width: "100%", borderRadius: 13 }}
           initialRegion={{
