@@ -54,6 +54,9 @@ const EventSchema = new Schema({
     venueName: {
         type: String,
     },
+    city: {
+        type: String,
+    },
     banner: {
         type: String,
     },

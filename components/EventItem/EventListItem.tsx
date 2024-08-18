@@ -33,7 +33,6 @@ const EventListItem = ({ event }: { event: any }) => {
     if (currentUser) {
       setLoading(true);
       let isFavorite = false;
-      console.log(currentUser.favorite_events);
       if (currentUser.favorite_events) {
         isFavorite = currentUser.favorite_events?.some(
           (favEvent) => favEvent._id.toString() === event._id.toString()

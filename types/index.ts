@@ -56,6 +56,7 @@ export interface IEvent {
   venueName?: string;
   banner?: string;
   categories?: ICategory[];
+  city?: string;
   dateField?: string;
   createdAt?: Date;
   updatedAt?: Date;
@@ -80,4 +81,13 @@ export interface UserStore {
   city: string | null;
   addFavoriteEvent: (event: IEvent) => void;
   removeFavoriteEvent: (eventId: string) => void;
+}
+
+export interface EventStore {
+  events: IEvent[];
+  setEvents: (events: IEvent[]) => void;
+  clearEvents: () => void;
+  filteredEvents: IEvent[];
+  setFilteredEvents: (filteredEvents: IEvent[]) => void;
+  clearFilteredEvents: () => void;
 }

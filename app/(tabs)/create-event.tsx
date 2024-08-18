@@ -24,6 +24,7 @@ import MapComponent from "@/components/Map/MapComponent";
 import { useState, useRef } from "react";
 import { useInsertEvent } from "@/api/events";
 import * as FileSystem from "expo-file-system";
+import * as Location from "expo-location";
 import { supabase } from "@/lib/supabase";
 import { decode } from "base64-arraybuffer";
 import { randomUUID } from "expo-crypto";
@@ -183,6 +184,8 @@ const CreateEvent = () => {
   const handleSubmit = async () => {
     const imagePath = await uploadImage();
     if (validate()) {
+      const rev = await Location.reverseGeocodeAsync(venue);
+      const city = rev[0].city;
       const data = {
         title,
         description,
@@ -194,11 +197,12 @@ const CreateEvent = () => {
         ticketPrice,
         capacity,
         categories,
+        city,
         image: imagePath,
         venue,
         email: currentUser?.primaryEmailAddress?.emailAddress,
       };
-      const res : any = insertEvent(data, {
+      const res: any = insertEvent(data, {
         onSuccess: () => {
           setTitle("");
           setDescription("");

@@ -6,6 +6,7 @@ import { Link, Stack } from "expo-router";
 import { SafeAreaView } from "react-native-safe-area-context";
 import useUserStore from "@/store/userStore";
 import { FontAwesome } from "@expo/vector-icons";
+import ExploreMap from "@/components/Map/ExploreMap";
 
 export default function TabTwoScreen() {
   const { city } = useUserStore();
@@ -23,16 +24,19 @@ export default function TabTwoScreen() {
             },
           }}
         />
-        <View style={{ marginTop: 50, paddingHorizontal: 20 }}>
+        <View style={{ marginTop: 55, paddingHorizontal: 20 }}>
           <View style={styles.title}>
-            <Text style={{ fontSize: 19, fontFamily: "FontSemiBold" }}>
-              Find events near{" "}
+            <Text style={{ fontSize: 16, fontFamily: "FontSemiBold" }}>
+              Find events near {""}
             </Text>
-            <Link href="" style={{flexDirection: "row", alignItems: "flex-end"}}>
+            <Link
+              href=""
+              style={{ flexDirection: "row", alignItems: "flex-end" }}
+            >
               <Text
                 style={{
                   color: "cyan",
-                  fontSize: 19,
+                  fontSize: 16,
                   fontFamily: "FontSemiBold",
                 }}
               >
@@ -40,9 +44,13 @@ export default function TabTwoScreen() {
                 {city}
                 {"  "}
               </Text>
-              <FontAwesome name="pencil-square-o" size={15} color="cyan" />
+              {/* <FontAwesome name="pencil-square-o" size={15} color="cyan" /> */}
             </Link>
           </View>
+          <ExploreMap />
+          <Text style={{ fontFamily: "FontSemiBold", marginTop: 23, fontSize: 18 }}>
+            Explore Rendezv
+          </Text>
         </View>
       </ScrollView>
     </SafeAreaView>
