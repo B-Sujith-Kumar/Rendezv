@@ -3,6 +3,7 @@ import { create } from "zustand";
 
 const useEventStore = create<EventStore>((set) => ({
     events: [],
+    popularEvents: [],
     filteredEvents: [],
     setEvents: (events : IEvent[]) => set({ events }),
     clearEvents: () => set({ events: [] }),

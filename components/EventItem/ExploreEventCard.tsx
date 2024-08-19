@@ -1,23 +1,16 @@
-import React, { useEffect, useState } from "react";
-import {
-  View,
-  Text,
-  Image,
-  StyleSheet,
-  TouchableOpacity,
-  Pressable,
-} from "react-native";
-import { AntDesign, Ionicons, MaterialIcons } from "@expo/vector-icons";
-import { SimpleLineIcons } from "@expo/vector-icons";
-import { host, url } from "@/constants";
-import { Link } from "expo-router";
-import axios from "axios";
-import { useUser } from "@clerk/clerk-expo";
-import useUserStore from "@/store/userStore";
-import { IEvent } from "@/types";
+import { Image, Pressable, StyleSheet, Text, View } from 'react-native'
+import React, { useEffect, useState } from 'react'
+import axios, { AxiosHeaders } from 'axios';
+import { host, url } from '@/constants';
+import { useUser } from '@clerk/clerk-expo';
+import { IEvent } from '@/types';
+import useUserStore from '@/store/userStore';
+import { Ionicons, MaterialIcons, SimpleLineIcons } from '@expo/vector-icons';
+import { TouchableOpacity } from 'react-native-gesture-handler';
+import { Link } from 'expo-router';
 
-const HorizontalEventCard = ({ event }: { event: IEvent }) => {
-  const { user } = useUser();
+const ExploreEventCard = ({event} : {event : IEvent}) => {
+    const { user } = useUser();
   const {
     user: currentUser,
     removeFavoriteEvent,
@@ -53,7 +46,6 @@ const HorizontalEventCard = ({ event }: { event: IEvent }) => {
       console.log("API error:", error);
     }
   };
-
   return (
     <Link href={`/(events)/event/${event._id.toString()}`} asChild>
       <Pressable style={styles.container}>
@@ -88,7 +80,7 @@ const HorizontalEventCard = ({ event }: { event: IEvent }) => {
             </Text>
           </View>
         </View>
-        <View style={{ marginTop: 25, paddingHorizontal: 14 }}>
+        <View style={{ marginTop: 18, paddingHorizontal: 14 }}>
           <Text
             style={{
               textTransform: "uppercase",
@@ -102,7 +94,7 @@ const HorizontalEventCard = ({ event }: { event: IEvent }) => {
           <View
             style={{
               flexDirection: "row",
-              marginTop: 5,
+              marginTop: 7,
               justifyContent: "space-between",
               alignItems: "center",
               gap: 10,
@@ -112,18 +104,18 @@ const HorizontalEventCard = ({ event }: { event: IEvent }) => {
               style={{
                 color: "white",
                 fontFamily: "FontBold",
-                fontSize: 25,
+                fontSize: 20,
               }}
             >
-              {event.title.length <= 18
+              {event.title.length <= 14
                 ? event.title
-                : event.title.slice(0, 15) + "..."}
+                : event.title.slice(0, 14) + "..."}
             </Text>
             <TouchableOpacity onPress={handleFavorite}>
               {isFav ? (
                 <MaterialIcons
                   name="favorite"
-                  size={24}
+                  size={20}
                   color="red"
                   style={{
                     borderWidth: 1.5,
@@ -135,7 +127,7 @@ const HorizontalEventCard = ({ event }: { event: IEvent }) => {
               ) : (
                 <MaterialIcons
                   name="favorite-border"
-                  size={24}
+                  size={20}
                   color="#dfdfdf"
                   style={{
                     borderWidth: 1.5,
@@ -203,11 +195,11 @@ const styles = StyleSheet.create({
     padding: 12,
     borderWidth: 0.9,
     borderColor: "#3a3a3a",
-    width: 340,
+    width: 270,
   },
   banner: {
     width: null,
-    height: 180,
+    height: 135,
     resizeMode: "cover",
     borderRadius: 25,
     borderWidth: 0.9,
@@ -215,4 +207,5 @@ const styles = StyleSheet.create({
   },
 });
 
-export default HorizontalEventCard;
+export default ExploreEventCard
+

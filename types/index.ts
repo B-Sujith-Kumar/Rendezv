@@ -85,6 +85,7 @@ export interface UserStore {
 
 export interface EventStore {
   events: IEvent[];
+  popularEvents: IEvent[];
   setEvents: (events: IEvent[]) => void;
   clearEvents: () => void;
   filteredEvents: IEvent[];

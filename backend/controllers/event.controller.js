@@ -89,3 +89,18 @@ export const getEventByCity = async (req, res) => {
         res.status(500).json({ message: error.message });
     }
 }
+
+export const getPopularEventsByCity = async (req, res) => {
+    try {
+        const { city } = req.params;
+        const events = await Event.find({ city })
+            .populate('categories')
+            .sort({ 'bookings.length': -1 })
+            .exec();
+        return res.status(200).json(events);
+    }
+    catch (error) {
+        console.log(error);
+        res.status(500).json({ message: error.message });
+    }
+}
