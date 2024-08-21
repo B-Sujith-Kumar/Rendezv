@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { createEvent, getEvent, getEventByCity, getEvents, getFreeEvents, getOnlineEvents, getPopularEventsByCity } from "../controllers/event.controller.js";
+import { createEvent, getEvent, getEventByCity, getEvents, getEventsWithCategory, getFreeEvents, getOnlineEvents, getPopularEventsByCity } from "../controllers/event.controller.js";
 
 const router = Router();
 
@@ -16,5 +16,7 @@ router.get("/get-events", getEvents);
 router.get("/get-event-by-city/:city", getEventByCity);
 
 router.get("/get-popular-events/:city", getPopularEventsByCity);
+
+router.post("/categories-with-events", getEventsWithCategory);
 
 export default router;

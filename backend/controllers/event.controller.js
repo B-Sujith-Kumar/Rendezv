@@ -1,6 +1,7 @@
 import Event from "../models/event.model.js";
 import Category from "../models/category.model.js";
 import User from "../models/user.model.js"
+import moment from "moment";
 
 export const createEvent = async (req, res) => {
     try {
@@ -102,5 +103,86 @@ export const getPopularEventsByCity = async (req, res) => {
     catch (error) {
         console.log(error);
         res.status(500).json({ message: error.message });
+    }
+}
+
+export const getEventsWithCategory = async (req, res) => {
+    const { city } = req.body;
+    if (!city) {
+        return res.status(400).json({ error: 'City is required' });
+    }
+
+    try {
+        const categories = await Category.aggregate([
+            {
+                $lookup: {
+                    from: 'events',
+                    localField: '_id',
+                    foreignField: 'categories',
+                    as: 'events',
+                },
+            },
+            {
+                $unwind: '$events',
+            },
+            {
+                $addFields: {
+                    eventDate: {
+                        $dateFromString: {
+                            dateString: '$events.dateField',
+                            format: '%d %B %Y, %H:%M %p', // Adjusted to 24-hour time format
+                        },
+                    },
+                },
+            },
+            {
+                $match: {
+                    'events.city': city,
+                    eventDate: { $gte: new Date() }, // Ensure the event is upcoming
+                },
+            },
+            {
+                $group: {
+                    _id: '$_id',
+                    name: { $first: '$name' },
+                    eventCount: { $sum: 1 },
+                    events: { $push: '$events' }, // Gather events under each category
+                },
+            },
+            {
+                $sort: { eventCount: -1 },
+            },
+            {
+                $limit: 4,
+            },
+            {
+                $project: {
+                    _id: 1,
+                    name: 1,
+                    eventCount: 1,
+                    events: {
+                        $slice: [{
+                            $filter: {
+                                input: '$events',
+                                as: 'event',
+                                cond: {
+                                    $gte: [{
+                                        $dateFromString: {
+                                            dateString: '$$event.dateField',
+                                            format: '%d %B %Y, %H:%M %p',
+                                        },
+                                    }, new Date()],
+                                },
+                            },
+                        }, 5],
+                    },
+                },
+            },
+        ]).exec();
+
+        return res.status(200).json(categories);
+    } catch (error) {
+        console.error("Error fetching top categories with events:", error);
+        return res.status(500).json({ error: 'Server error' });
     }
 }
