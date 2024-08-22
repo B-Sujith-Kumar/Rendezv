@@ -38,12 +38,15 @@ import MapView, { Marker } from "react-native-maps";
 import { useUser } from "@clerk/clerk-expo";
 import useUserStore from "@/store/userStore";
 import axios from "axios";
+import { getDateString, getTime } from "@/lib/utils";
 
 const EventPage = () => {
   const scrollRef = useAnimatedRef<Animated.ScrollView>();
   const scrollOffset = useSharedValue(0);
   const { user } = useUser();
   const [loading, setLoading] = useState(false);
+  const [dateString, setDateString] = useState<string>("");
+  const [time, setTime] = useState<string>("");
   const {
     user: currentUser,
     removeFavoriteEvent,
@@ -78,6 +81,7 @@ const EventPage = () => {
   const { id: idString } = useLocalSearchParams();
   const id = typeof idString === "string" ? idString : idString![0];
   const { data: event, isLoading, error } = useEvent(id);
+
   const imageAnimatedStyle = useAnimatedStyle(() => {
     return {
       transform: [
@@ -122,6 +126,13 @@ const EventPage = () => {
       alert(error.message);
     }
   };
+
+  useEffect(() => {
+    if (event) {
+      setDateString(getDateString(event.dateField.toString()));
+      setTime(getTime(event.dateField.toString()));
+    }
+  }, [event])
 
   if (isLoading) {
     return (
@@ -303,7 +314,7 @@ const EventPage = () => {
                     fontFamily: "FontSemiBold",
                   }}
                 >
-                  {event?.dateField.split(",")[0]}
+                  {dateString}
                 </Text>
                 <Text
                   style={{
@@ -312,7 +323,7 @@ const EventPage = () => {
                     fontFamily: "FontRegular",
                   }}
                 >
-                  {event?.dateField.split(",")[1]} Onwards
+                  {time} Onwards
                 </Text>
               </View>
             </View>

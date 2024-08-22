@@ -15,6 +15,7 @@ import axios from "axios";
 import { useUser } from "@clerk/clerk-expo";
 import useUserStore from "@/store/userStore";
 import { IEvent } from "@/types";
+import { getDateString } from "@/lib/utils";
 
 const HorizontalEventCard = ({ event }: { event: IEvent }) => {
   const { user } = useUser();
@@ -23,6 +24,7 @@ const HorizontalEventCard = ({ event }: { event: IEvent }) => {
     removeFavoriteEvent,
     addFavoriteEvent,
   } = useUserStore();
+  const dateString = getDateString(event.dateField?.toString()!);
   const [isFav, setIsFav] = useState<boolean>(false);
 
   useEffect(() => {
@@ -97,7 +99,7 @@ const HorizontalEventCard = ({ event }: { event: IEvent }) => {
               letterSpacing: 0.7,
             }}
           >
-            {event.dateField}
+            {dateString}
           </Text>
           <View
             style={{

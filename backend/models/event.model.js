@@ -66,14 +66,10 @@ const EventSchema = new Schema({
             ref: 'Category',
         },
     ],
-    date: {
+    dateField: {
         type: Date,
         required: true,
     },
-    time: {
-        type: String,
-        required: true,
-    }
 }, { timestamps: true });
 
 const Event = model('Event', EventSchema);

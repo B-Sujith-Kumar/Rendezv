@@ -29,6 +29,7 @@ import { supabase } from "@/lib/supabase";
 import { decode } from "base64-arraybuffer";
 import { randomUUID } from "expo-crypto";
 import { useUser } from "@clerk/clerk-expo";
+import moment from 'moment-timezone';
 
 const CreateEvent = () => {
   const [eventMode, setEventMode] = useState("Offline");
@@ -39,6 +40,7 @@ const CreateEvent = () => {
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [dateField, setDateField] = useState("");
+  const [displayDate, setDisplayDate] = useState("");
   const [meetingLink, setMeetingLink] = useState("");
   const [venueName, setVenueName] = useState("");
   const [capacity, setCapacity] = useState("");
@@ -80,8 +82,11 @@ const CreateEvent = () => {
 
   const onChange = (e: any, selectedDate: any) => {
     const datetime = formatDateToIST(selectedDate);
+    console.log(selectedDate);
     setDate(selectedDate);
-    setDateField(datetime);
+    setDateField(selectedDate);
+    setDisplayDate(datetime);
+
     if (calculateTimeDifference(selectedDate) < 0) {
       setDateField("");
       setErrors({ ...errors, date: "Invalid date and time" });
@@ -182,49 +187,56 @@ const CreateEvent = () => {
   };
 
   const handleSubmit = async () => {
-    const imagePath = await uploadImage();
-    if (validate()) {
-      const rev = await Location.reverseGeocodeAsync(venue);
-      const city = rev[0].city;
-      const data = {
-        title,
-        description,
-        dateField,
-        eventMode,
-        venueName,
-        meetingLink,
-        isPaid,
-        ticketPrice,
-        capacity,
-        categories,
-        city,
-        image: imagePath,
-        venue,
-        email: currentUser?.primaryEmailAddress?.emailAddress,
-      };
-      const res: any = insertEvent(data, {
-        onSuccess: () => {
-          setTitle("");
-          setDescription("");
-          setDateField("");
-          setEventMode("Offline");
-          setVenueName("");
-          setMeetingLink("");
-          setIsPaid(false);
-          setTicketPrice("");
-          setCapacity("");
-          setCategories([]);
-          setImage("");
-          setVenue({ latitude: 0, longitude: 0 });
-          setErrors({});
-          Alert.alert("Event created successfully");
-        },
-        onError: (err) => {
-          console.log(err);
-          Alert.alert("An error occurred while creating the event");
-        },
-      });
+    try {
+        const imagePath = await uploadImage();
+        if (validate()) {
+          const rev = await Location.reverseGeocodeAsync(venue);
+          const city = rev[0].city;
+          const data = {
+            title,
+            description,
+            dateField,
+            eventMode,
+            venueName,
+            meetingLink,
+            isPaid,
+            ticketPrice,
+            capacity,
+            categories,
+            city,
+            image: imagePath,
+            venue,
+            email: currentUser?.primaryEmailAddress?.emailAddress,
+          };
+          console.log(data)
+          const res: any = insertEvent(data, {
+            onSuccess: () => {
+              setTitle("");
+              setDescription("");
+              setDateField("");
+              setEventMode("Offline");
+              setVenueName("");
+              setMeetingLink("");
+              setIsPaid(false);
+              setTicketPrice("");
+              setCapacity("");
+              setCategories([]);
+              setImage("");
+              setVenue({ latitude: 0, longitude: 0 });
+              setErrors({});
+              Alert.alert("Event created successfully");
+            },
+            onError: (err) => {
+              console.log(err);
+              Alert.alert("An error occurred while creating the event");
+            },
+          });
+        }
+    } catch (error) {
+        console.log("API error:", error);
+        
     }
+
   };
 
   return (
@@ -303,7 +315,7 @@ const CreateEvent = () => {
                 <TextInput
                   style={{ ...styles.inputStyle, marginTop: 0, width: "93%" }}
                   placeholder="Pick a date and time"
-                  value={dateField}
+                  value={displayDate}
                   editable={false}
                 />
                 <TouchableOpacity
