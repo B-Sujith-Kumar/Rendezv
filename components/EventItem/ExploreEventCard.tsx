@@ -8,6 +8,7 @@ import useUserStore from '@/store/userStore';
 import { Ionicons, MaterialIcons, SimpleLineIcons } from '@expo/vector-icons';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import { Link } from 'expo-router';
+import { getDateString } from '@/lib/utils';
 
 const ExploreEventCard = ({event} : {event : IEvent}) => {
     const { user } = useUser();
@@ -17,6 +18,7 @@ const ExploreEventCard = ({event} : {event : IEvent}) => {
     addFavoriteEvent,
   } = useUserStore();
   const [isFav, setIsFav] = useState<boolean>(false);
+  const date = getDateString(event.dateField?.toString()!);
 
   useEffect(() => {
     if (currentUser) {
@@ -89,7 +91,7 @@ const ExploreEventCard = ({event} : {event : IEvent}) => {
               letterSpacing: 0.7,
             }}
           >
-            {event.dateField}
+            {date}
           </Text>
           <View
             style={{

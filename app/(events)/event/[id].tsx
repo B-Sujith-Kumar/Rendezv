@@ -354,7 +354,7 @@ const EventPage = () => {
                       fontFamily: "FontRegular",
                     }}
                   >
-                    {event?.dateField.split(",")[1]} Onwards
+                    {time} Onwards
                   </Text>
                 </View>
               </View>

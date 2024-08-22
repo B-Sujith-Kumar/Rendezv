@@ -17,6 +17,7 @@ import { IEvent } from "@/types";
 import { host, url } from "@/constants";
 import axios from "axios";
 import { TouchableOpacity } from "react-native-gesture-handler";
+import { getDateString } from "@/lib/utils";
 
 const Favourites = () => {
   const { user } = useUser();
@@ -125,7 +126,7 @@ const Favourites = () => {
                       {event.title}
                     </Text>
                     <Text style={styles.subText}>
-                      {event.dateField?.split(",")[0]}
+                      {getDateString(event.dateField?.toString()!)}
                     </Text>
                     {!event.is_online && (
                       <Text style={styles.subText}>{event.venueName}</Text>

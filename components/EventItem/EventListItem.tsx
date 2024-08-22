@@ -14,8 +14,10 @@ import { Link } from "expo-router";
 import axios from "axios";
 import useUserStore from "@/store/userStore";
 import { useUser } from "@clerk/clerk-expo";
+import { getDateString } from "@/lib/utils";
+import { IEvent } from "@/types";
 
-const EventListItem = ({ event }: { event: any }) => {
+const EventListItem = ({ event }: { event: IEvent }) => {
   if (event.is_online) {
     return;
   }
@@ -27,6 +29,7 @@ const EventListItem = ({ event }: { event: any }) => {
     addFavoriteEvent,
   } = useUserStore();
   const [isFav, setIsFav] = useState<boolean>(false);
+  const date = getDateString(event.dateField?.toString()!);
   const [loading, setLoading] = useState<boolean>(false);
 
   useEffect(() => {
@@ -106,7 +109,7 @@ const EventListItem = ({ event }: { event: any }) => {
               fontSize: 12,
             }}
           >
-            {event.dateField}
+            {date}
           </Text>
           <View
             style={{

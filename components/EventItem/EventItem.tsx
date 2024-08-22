@@ -2,8 +2,10 @@ import { View, Text, Image, StyleSheet, TouchableOpacity } from "react-native";
 import React from "react";
 import { MaterialIcons } from "@expo/vector-icons";
 import { SimpleLineIcons } from "@expo/vector-icons";
+import { IEvent } from "@/types";
 
 const EventItem = ({ event }: { event: any }) => {
+
   return (
     <View style={styles.container}>
       <View>
