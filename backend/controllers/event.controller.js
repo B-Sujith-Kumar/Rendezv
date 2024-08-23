@@ -146,7 +146,6 @@ export const getTopCategoriesWithEvents = async (req, res) => {
             },
         ]);
 
-        // Convert the event dateField to IST for all events
         categories = await Promise.all(
             categories.map(async (category) => {
                 const eventsWithPopulatedCategories = await Promise.all(
@@ -171,3 +170,46 @@ export const getTopCategoriesWithEvents = async (req, res) => {
         res.status(500).json({ error: error.message });
     }
 };
+
+export const getPopularCategories = async (req, res) => {
+    try {
+        const { city } = req.params;
+        const categories = await Category.aggregate([
+            {
+                $lookup: {
+                    from: 'events',
+                    localField: '_id',
+                    foreignField: 'categories',
+                    as: 'events',
+                },
+            },
+            {
+                $unwind: '$events',
+            },
+            {
+                $match: {
+                    'events.city': city,
+                    'events.dateField': { $gte: new Date() },
+                },
+            },
+            {
+                $group: {
+                    _id: '$_id',
+                    name: { $first: '$name' },
+                    eventCount: { $sum: 1 },
+                },
+            },
+            {
+                $sort: { eventCount: -1 },
+            },
+            {
+                $limit: 10,
+            },
+        ]);
+
+        return res.json(categories);
+    } catch (error) {
+        console.error("Error fetching popular categories:", error);
+        return [];
+    }
+}

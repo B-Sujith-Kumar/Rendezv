@@ -12,11 +12,14 @@ import useEventStore from "@/store/eventStore";
 import { FlatList } from "react-native";
 import HorizontalEventCard from "@/components/EventItem/HorizontalEventCard";
 import ExploreEventCard from "@/components/EventItem/ExploreEventCard";
+import { IEvent } from "@/types";
+import { AntDesign } from "@expo/vector-icons";
 
 export default function TabTwoScreen() {
   const { city, user } = useUserStore();
   const { popularEvents } = useEventStore();
   const [categoryEvents, setCategoryEvents] = useState([]);
+  const [categories, setCategories] = useState([]);
 
   useEffect(() => {
     try {
@@ -32,8 +35,15 @@ export default function TabTwoScreen() {
         });
         setCategoryEvents(res.data);
       };
+      const getCategories = async () => {
+        const res = await axios.get(
+          `${host}/events/popular-categories/${city}`
+        );
+        setCategories(res.data);
+      };
       fetchPopularEvents();
       getCategoryEvents();
+      getCategories();
     } catch (error) {}
   }, []);
 
@@ -80,7 +90,9 @@ export default function TabTwoScreen() {
           <Text style={{ fontFamily: "FontBold", marginTop: 23, fontSize: 18 }}>
             Explore Rendezv
           </Text>
-          <Text style={{ fontFamily: "FontBold", marginTop: 20, fontSize: 16 }}>
+          <Text
+            style={{ fontFamily: "FontBold", marginTop: 20, fontSize: 17.5 }}
+          >
             Popular Now
           </Text>
           {popularEvents.length > 0 && (
@@ -95,34 +107,99 @@ export default function TabTwoScreen() {
             />
           )}
           {
-            <View style={{paddingBottom: 20}}>
-              {categoryEvents.map((category) => (
-                <View key={category.name} style={{ marginTop: 10 }}>
-                  <Text
-                    style={{
-                      fontFamily: "FontBold",
-                      marginTop: 20,
-                      fontSize: 16,
-                      textTransform: "capitalize",
-                    }}
-                  >
-                    {category.name} 
-                  </Text>
-                  <FlatList
-                    data={category.events}
-                    renderItem={({ item }) => (
-                      <ExploreEventCard event={item} key={item.id} />
-                    )}
-                    keyExtractor={(item, index) => index.toString()}
-                    scrollEnabled={true}
-                    horizontal
-                    showsHorizontalScrollIndicator={false}
-                    contentContainerStyle={{ gap: 20 }}
-                  />
-                </View>
-              ))}
+            <View style={{}}>
+              {categoryEvents.map(
+                (category: {
+                  name: string;
+                  eventCount: number;
+                  events: IEvent[];
+                }) => (
+                  <View key={category.name} style={{ marginTop: 10 }}>
+                    <Text
+                      style={{
+                        fontFamily: "FontBold",
+                        marginTop: 20,
+                        fontSize: 17.5,
+                        textTransform: "capitalize",
+                      }}
+                    >
+                      {category.name}
+                    </Text>
+                    <FlatList
+                      data={category.events}
+                      renderItem={({ item }) => (
+                        <ExploreEventCard
+                          event={item}
+                          key={item._id.toString()}
+                        />
+                      )}
+                      keyExtractor={(item, index) => index.toString()}
+                      scrollEnabled={true}
+                      horizontal
+                      showsHorizontalScrollIndicator={false}
+                      contentContainerStyle={{ gap: 20 }}
+                    />
+                  </View>
+                )
+              )}
             </View>
           }
+          <View style={{ paddingBottom: 20 }}>
+            <Text
+              style={{
+                fontFamily: "FontBold",
+                marginTop: 25,
+                fontSize: 17.5,
+              }}
+            >
+              Browse by categories
+            </Text>
+            <SafeAreaView edges={[]}>
+              <View style={{ marginTop: 20 }}>
+                {categories && (
+                  <FlatList
+                    data={categories}
+                    numColumns={2}
+                    scrollEnabled={false}
+                    key={2}
+                    keyExtractor={(item, index) => index.toString()}
+                    columnWrapperStyle={{
+                      gap: 10,
+                    }}
+                    contentContainerStyle={{
+                      gap: 15,
+                    }}
+                    renderItem={({ item }: { item: { name: string } }) => (
+                      <View
+                        style={{
+                          width: "48%",
+                          borderWidth: 1,
+                          borderColor: "gray",
+                          padding: 10,
+                          paddingVertical: 14,
+                          overflow: "hidden",
+                          flexDirection: "row",
+                          alignItems: "center",
+                          justifyContent: "space-between",
+                        }}
+                      >
+                        <Text
+                          style={{
+                            fontFamily: "FontBold",
+                            fontSize: 17.5,
+                            textTransform: "capitalize",
+                          }}
+                        >
+                          {item.name}
+                        </Text>
+                        <AntDesign name="right" size={18} color="gray" />
+                      </View>
+                    )}
+                  />
+                )}
+              </View>
+            </SafeAreaView>
+          </View>
         </View>
       </ScrollView>
     </View>
