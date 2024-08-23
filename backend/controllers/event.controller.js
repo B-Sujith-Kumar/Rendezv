@@ -1,7 +1,8 @@
 import Event from "../models/event.model.js";
 import Category from "../models/category.model.js";
 import User from "../models/user.model.js"
-import moment from "moment";
+import moment from 'moment-timezone';
+
 
 export const createEvent = async (req, res) => {
     try {
@@ -106,14 +107,12 @@ export const getPopularEventsByCity = async (req, res) => {
     }
 }
 
-export const getEventsWithCategory = async (req, res) => {
+export const getTopCategoriesWithEvents = async (req, res) => {
     const { city } = req.body;
-    if (!city) {
-        return res.status(400).json({ error: 'City is required' });
-    }
 
     try {
-        const categories = await Category.aggregate([
+        // Aggregation pipeline to get top categories with their events
+        let categories = await Category.aggregate([
             {
                 $lookup: {
                     from: 'events',
@@ -126,19 +125,9 @@ export const getEventsWithCategory = async (req, res) => {
                 $unwind: '$events',
             },
             {
-                $addFields: {
-                    eventDate: {
-                        $dateFromString: {
-                            dateString: '$events.dateField',
-                            format: '%d %B %Y, %H:%M %p', // Adjusted to 24-hour time format
-                        },
-                    },
-                },
-            },
-            {
                 $match: {
                     'events.city': city,
-                    eventDate: { $gte: new Date() }, // Ensure the event is upcoming
+                    'events.dateField': { $gte: new Date() },
                 },
             },
             {
@@ -146,7 +135,7 @@ export const getEventsWithCategory = async (req, res) => {
                     _id: '$_id',
                     name: { $first: '$name' },
                     eventCount: { $sum: 1 },
-                    events: { $push: '$events' }, // Gather events under each category
+                    events: { $push: '$events' },
                 },
             },
             {
@@ -155,34 +144,30 @@ export const getEventsWithCategory = async (req, res) => {
             {
                 $limit: 4,
             },
-            {
-                $project: {
-                    _id: 1,
-                    name: 1,
-                    eventCount: 1,
-                    events: {
-                        $slice: [{
-                            $filter: {
-                                input: '$events',
-                                as: 'event',
-                                cond: {
-                                    $gte: [{
-                                        $dateFromString: {
-                                            dateString: '$$event.dateField',
-                                            format: '%d %B %Y, %H:%M %p',
-                                        },
-                                    }, new Date()],
-                                },
-                            },
-                        }, 5],
-                    },
-                },
-            },
-        ]).exec();
+        ]);
 
-        return res.status(200).json(categories);
+        // Convert the event dateField to IST for all events
+        categories = await Promise.all(
+            categories.map(async (category) => {
+                const eventsWithPopulatedCategories = await Promise.all(
+                    category.events.map(async (event) => {
+                        const populatedEvent = await Event.findById(event._id).populate('categories');
+                        return {
+                            ...populatedEvent.toObject(),
+                            dateField: moment(populatedEvent.dateField).tz('Asia/Kolkata').toDate(),
+                        };
+                    })
+                );
+                return {
+                    ...category,
+                    events: eventsWithPopulatedCategories,
+                };
+            })
+        );
+
+        return res.json(categories);
     } catch (error) {
         console.error("Error fetching top categories with events:", error);
-        return res.status(500).json({ error: 'Server error' });
+        res.status(500).json({ error: error.message });
     }
-}
+};
