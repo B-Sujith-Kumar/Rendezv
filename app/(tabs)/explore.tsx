@@ -5,7 +5,7 @@ import { Link, Stack } from "expo-router";
 import { SafeAreaView } from "react-native-safe-area-context";
 import useUserStore from "@/store/userStore";
 import ExploreMap from "@/components/Map/ExploreMap";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import axios from "axios";
 import { host } from "@/constants";
 import useEventStore from "@/store/eventStore";
@@ -16,6 +16,7 @@ import ExploreEventCard from "@/components/EventItem/ExploreEventCard";
 export default function TabTwoScreen() {
   const { city, user } = useUserStore();
   const { popularEvents } = useEventStore();
+  const [categoryEvents, setCategoryEvents] = useState([]);
 
   useEffect(() => {
     try {
@@ -25,27 +26,34 @@ export default function TabTwoScreen() {
         );
         useEventStore.setState({ popularEvents: res.data });
       };
+      const getCategoryEvents = async () => {
+        const res = await axios.post(`${host}/events/categories-with-events`, {
+          city,
+        });
+        setCategoryEvents(res.data);
+      };
       fetchPopularEvents();
+      getCategoryEvents();
     } catch (error) {}
   }, []);
 
   return (
-    <View  style={styles.container}>
-        <Stack.Screen
-          options={{
-            title: "Explore",
-            headerTransparent: false,
-            headerTitleStyle: {
-              fontWeight: "bold",
-              fontFamily: "FontBold",
-              fontSize: 19,
-            },
-            headerStyle: {
-                backgroundColor: "black",
-            }
-          }}
-        />
-      <ScrollView>
+    <View style={styles.container}>
+      <Stack.Screen
+        options={{
+          title: "Explore",
+          headerTransparent: false,
+          headerTitleStyle: {
+            fontWeight: "bold",
+            fontFamily: "FontBold",
+            fontSize: 19,
+          },
+          headerStyle: {
+            backgroundColor: "black",
+          },
+        }}
+      />
+      <ScrollView showsVerticalScrollIndicator={false}>
         <View style={{ marginTop: 20, paddingHorizontal: 20 }}>
           <View style={styles.title}>
             <Text style={{ fontSize: 16, fontFamily: "FontSemiBold" }}>
@@ -75,15 +83,46 @@ export default function TabTwoScreen() {
           <Text style={{ fontFamily: "FontBold", marginTop: 20, fontSize: 16 }}>
             Popular Now
           </Text>
-          {popularEvents.length > 0 && <FlatList
-            data={popularEvents}
-            renderItem={({ item }) => <ExploreEventCard event={item} />}
-            keyExtractor={(item, index) => index.toString()}
-            scrollEnabled={true}
-            horizontal
-            showsHorizontalScrollIndicator={false}
-            contentContainerStyle={{ gap: 20 }}
-          />}
+          {popularEvents.length > 0 && (
+            <FlatList
+              data={popularEvents}
+              renderItem={({ item }) => <ExploreEventCard event={item} />}
+              keyExtractor={(item, index) => index.toString()}
+              scrollEnabled={true}
+              horizontal
+              showsHorizontalScrollIndicator={false}
+              contentContainerStyle={{ gap: 20 }}
+            />
+          )}
+          {
+            <View style={{paddingBottom: 20}}>
+              {categoryEvents.map((category) => (
+                <View key={category.name} style={{ marginTop: 10 }}>
+                  <Text
+                    style={{
+                      fontFamily: "FontBold",
+                      marginTop: 20,
+                      fontSize: 16,
+                      textTransform: "capitalize",
+                    }}
+                  >
+                    {category.name} 
+                  </Text>
+                  <FlatList
+                    data={category.events}
+                    renderItem={({ item }) => (
+                      <ExploreEventCard event={item} key={item.id} />
+                    )}
+                    keyExtractor={(item, index) => index.toString()}
+                    scrollEnabled={true}
+                    horizontal
+                    showsHorizontalScrollIndicator={false}
+                    contentContainerStyle={{ gap: 20 }}
+                  />
+                </View>
+              ))}
+            </View>
+          }
         </View>
       </ScrollView>
     </View>
