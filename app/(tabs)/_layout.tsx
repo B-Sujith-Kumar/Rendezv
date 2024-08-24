@@ -51,11 +51,12 @@ export default function TabLayout() {
       const newUser = await axios.post(`${host}/users/get-user`, {
         email: user?.primaryEmailAddress?.emailAddress,
       });
+      if (!newUser) return;
       useUserStore.setState({ user: newUser.data });
-      useUserStore.setState({ location: newUser.data.location });
-      useUserStore.setState({ city: newUser.data.city });
-      useUserStore.setState({ userCity: newUser.data.city });
-      useUserStore.setState({ userLocation: newUser.data.location });
+      useUserStore.setState({ location: newUser.data?.location });
+      useUserStore.setState({ city: newUser.data?.city });
+      useUserStore.setState({ userCity: newUser.data?.city });
+      useUserStore.setState({ userLocation: newUser.data?.location });
     })();
   }, [user]);
 

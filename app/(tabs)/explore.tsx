@@ -1,4 +1,4 @@
-import { ScrollView, StyleSheet } from "react-native";
+import { ActivityIndicator, ScrollView, StyleSheet } from "react-native";
 
 import { Text, View } from "@/components/Themed";
 import { Link, Stack } from "expo-router";
@@ -10,7 +10,6 @@ import axios from "axios";
 import { host } from "@/constants";
 import useEventStore from "@/store/eventStore";
 import { FlatList } from "react-native";
-import HorizontalEventCard from "@/components/EventItem/HorizontalEventCard";
 import ExploreEventCard from "@/components/EventItem/ExploreEventCard";
 import { IEvent } from "@/types";
 import { AntDesign } from "@expo/vector-icons";
@@ -20,6 +19,7 @@ export default function TabTwoScreen() {
   const { popularEvents } = useEventStore();
   const [categoryEvents, setCategoryEvents] = useState([]);
   const [categories, setCategories] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     try {
@@ -40,12 +40,24 @@ export default function TabTwoScreen() {
           `${host}/events/popular-categories/${city}`
         );
         setCategories(res.data);
+        setLoading(false);
       };
+      setLoading(true);
       fetchPopularEvents();
       getCategoryEvents();
       getCategories();
-    } catch (error) {}
+    } catch (error) {
+        console.log(error);
+    }
   }, []);
+
+  if (loading) {
+    return (
+      <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+        <ActivityIndicator size="large" />
+      </View>
+    );
+  }
 
   return (
     <View style={styles.container}>
@@ -181,6 +193,7 @@ export default function TabTwoScreen() {
                           flexDirection: "row",
                           alignItems: "center",
                           justifyContent: "space-between",
+                          borderRadius: 10,
                         }}
                       >
                         <Text
