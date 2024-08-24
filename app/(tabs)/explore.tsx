@@ -15,8 +15,8 @@ import { IEvent } from "@/types";
 import { AntDesign } from "@expo/vector-icons";
 
 export default function TabTwoScreen() {
-  const { city, user } = useUserStore();
-  const { popularEvents } = useEventStore();
+  const { city } = useUserStore();
+  const { popularEvents, setEvents, setFilteredEvents } = useEventStore();
   const [categoryEvents, setCategoryEvents] = useState([]);
   const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -47,9 +47,27 @@ export default function TabTwoScreen() {
       getCategoryEvents();
       getCategories();
     } catch (error) {
-        console.log(error);
+      console.log(error);
     }
-  }, []);
+  }, [city]);
+
+  useEffect(() => {
+    try {
+      const fetchEvents = async () => {
+        const res = await axios.get(`${host}/events/get-event-by-city/${city}`);
+        setEvents(res.data);
+        setFilteredEvents(res.data);
+      };
+      const fetchOnlineEvents = async () => {
+        const res = await axios.get(`${host}/events/get-online-events`);
+        useEventStore.setState({ online_events: res.data });
+      };
+      fetchEvents();
+      fetchOnlineEvents();
+    } catch (error) {
+      console.log(error);
+    }
+  }, [city]);
 
   if (loading) {
     return (

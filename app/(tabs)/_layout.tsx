@@ -17,13 +17,6 @@ import axios from "axios";
 import { useStore } from "zustand";
 import useUserStore from "@/store/userStore";
 
-function TabBarIcon(props: {
-  name: React.ComponentProps<typeof FontAwesome>["name"];
-  color: string;
-}) {
-  return <FontAwesome size={28} style={{ marginBottom: -3 }} {...props} />;
-}
-
 export default function TabLayout() {
   const colorScheme = useColorScheme();
   const { user } = useUser();
@@ -59,6 +52,8 @@ export default function TabLayout() {
       useUserStore.setState({ userLocation: newUser.data?.location });
     })();
   }, [user]);
+
+  
 
   const { isSignedIn } = useAuth();
 

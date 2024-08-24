@@ -63,6 +63,7 @@ export interface IEvent {
 }
 
 export interface ICategory {
+  _id: Types.ObjectId;
   name: string;
   description?: string;
   events?: Types.ObjectId[];
@@ -86,9 +87,22 @@ export interface UserStore {
 export interface EventStore {
   events: IEvent[];
   popularEvents: IEvent[];
+  filteredEvents: IEvent[];
+  online_events: IEvent[];
+
   setEvents: (events: IEvent[]) => void;
   clearEvents: () => void;
-  filteredEvents: IEvent[];
   setFilteredEvents: (filteredEvents: IEvent[]) => void;
   clearFilteredEvents: () => void;
+
+  selectedDateRange: { startDate: string | null; endDate: string | null };
+  isOnline: boolean | null;
+  categoryId: string | null;
+  isPaid: boolean | null;
+
+  setDateRange: (startDate: string | null, endDate: string | null) => void;
+  setIsOnline: (isOnline: boolean | null) => void;
+  setCategoryId: (categoryId: string | null) => void;
+  setIsPaid: (isPaid: boolean | null) => void;
+  applyFilters: () => void;
 }
