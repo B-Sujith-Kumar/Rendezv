@@ -109,7 +109,7 @@ export default function TabOneScreen() {
                     </TouchableOpacity>
                   ))}
                 </ScrollView>
-                <PopularEvents />
+                {/* <PopularEvents /> */}
                 <OnlineEvents />
                 <FreeEvents />
               </View>

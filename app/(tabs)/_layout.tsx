@@ -44,6 +44,7 @@ export default function TabLayout() {
       const newUser = await axios.post(`${host}/users/get-user`, {
         email: user?.primaryEmailAddress?.emailAddress,
       });
+      console.log("Entered");
       if (!newUser) return;
       useUserStore.setState({ user: newUser.data });
       useUserStore.setState({ location: newUser.data?.location });

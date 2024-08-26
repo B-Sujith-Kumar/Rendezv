@@ -1,7 +1,12 @@
-import { ActivityIndicator, ScrollView, StyleSheet } from "react-native";
+import {
+  ActivityIndicator,
+  ScrollView,
+  StyleSheet,
+  TouchableOpacity,
+} from "react-native";
 
 import { Text, View } from "@/components/Themed";
-import { Link, Stack } from "expo-router";
+import { Link, router, Stack } from "expo-router";
 import { SafeAreaView } from "react-native-safe-area-context";
 import useUserStore from "@/store/userStore";
 import ExploreMap from "@/components/Map/ExploreMap";
@@ -12,11 +17,18 @@ import useEventStore from "@/store/eventStore";
 import { FlatList } from "react-native";
 import ExploreEventCard from "@/components/EventItem/ExploreEventCard";
 import { IEvent } from "@/types";
-import { AntDesign } from "@expo/vector-icons";
+import { AntDesign, FontAwesome6 } from "@expo/vector-icons";
+import { Types } from "mongoose";
 
 export default function TabTwoScreen() {
   const { city } = useUserStore();
-  const { popularEvents, setEvents, setFilteredEvents } = useEventStore();
+  const {
+    popularEvents,
+    setEvents,
+    setFilteredEvents,
+    filteredEvents,
+    setCategoryId,
+  } = useEventStore();
   const [categoryEvents, setCategoryEvents] = useState([]);
   const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -68,6 +80,10 @@ export default function TabTwoScreen() {
       console.log(error);
     }
   }, [city]);
+
+  const handleCategoryPress = (categoryId: string) => {
+    setCategoryId(categoryId);
+  };
 
   if (loading) {
     return (
@@ -140,21 +156,61 @@ export default function TabTwoScreen() {
             <View style={{}}>
               {categoryEvents.map(
                 (category: {
+                  _id: Types.ObjectId;
                   name: string;
                   eventCount: number;
                   events: IEvent[];
                 }) => (
                   <View key={category.name} style={{ marginTop: 10 }}>
-                    <Text
+                    <View
                       style={{
-                        fontFamily: "FontBold",
-                        marginTop: 20,
-                        fontSize: 17.5,
-                        textTransform: "capitalize",
+                        flexDirection: "row",
+                        justifyContent: "space-between",
+                        alignItems: "center",
+                        paddingRight: 15,
                       }}
                     >
-                      {category.name}
-                    </Text>
+                      <Text
+                        style={{
+                          fontFamily: "FontBold",
+                          marginTop: 20,
+                          fontSize: 17.5,
+                          textTransform: "capitalize",
+                        }}
+                      >
+                        {category.name}
+                      </Text>
+                      <TouchableOpacity
+                        style={{
+                          flexDirection: "row",
+                          alignItems: "center",
+                          alignContent: "center",
+                          justifyContent: "center",
+                          gap: 8,
+                        }}
+                        onPress={() => {
+                          handleCategoryPress(category._id.toString());
+                          router.push("/(events)/filter-events");
+                        }}
+                      >
+                        <Text
+                          style={{
+                            fontFamily: "FontMedium",
+                            marginTop: 20,
+                            fontSize: 16.5,
+                            color: "cyan",
+                          }}
+                        >
+                          See all
+                        </Text>
+                        <FontAwesome6
+                          name="arrow-right-long"
+                          size={17}
+                          color="cyan"
+                          style={{ marginTop: 20 }}
+                        />
+                      </TouchableOpacity>
+                    </View>
                     <FlatList
                       data={category.events}
                       renderItem={({ item }) => (
