@@ -133,9 +133,16 @@ export default function TabTwoScreen() {
             </Link>
           </View>
           <ExploreMap />
-          <Text style={{ fontFamily: "FontBold", marginTop: 23, fontSize: 18 }}>
+          {/* <Text
+            style={{
+              fontFamily: "FontBold",
+              marginTop: 27,
+              fontSize: 20,
+              alignSelf: "center",
+            }}
+          >
             Explore Rendezv
-          </Text>
+          </Text> */}
           <Text
             style={{ fontFamily: "FontBold", marginTop: 20, fontSize: 17.5 }}
           >
@@ -189,7 +196,7 @@ export default function TabTwoScreen() {
                           gap: 8,
                         }}
                         onPress={() => {
-                          handleCategoryPress(category._id.toString());
+                          handleCategoryPress(category.name);
                           router.push("/(events)/filter-events");
                         }}
                       >

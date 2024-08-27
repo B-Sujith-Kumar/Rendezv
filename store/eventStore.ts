@@ -58,7 +58,7 @@ const useEventStore = create<EventStore>((set, get) => ({
 
     if (categoryId) {
       filteredEvents = filteredEvents.filter((event) =>
-        event.categories?.some((category) => category._id.toString() === categoryId)
+        event.categories?.some((category) => category.name === categoryId)
       );
     }
 
