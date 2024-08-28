@@ -19,6 +19,7 @@ import ExploreEventCard from "@/components/EventItem/ExploreEventCard";
 import { IEvent } from "@/types";
 import { AntDesign, FontAwesome6 } from "@expo/vector-icons";
 import { Types } from "mongoose";
+import { useUser } from "@clerk/clerk-expo";
 
 export default function TabTwoScreen() {
   const { city } = useUserStore();
@@ -210,12 +211,12 @@ export default function TabTwoScreen() {
                         >
                           See all
                         </Text>
-                        <FontAwesome6
+                        {/* <FontAwesome6
                           name="arrow-right-long"
                           size={17}
                           color="cyan"
                           style={{ marginTop: 20 }}
-                        />
+                        /> */}
                       </TouchableOpacity>
                     </View>
                     <FlatList

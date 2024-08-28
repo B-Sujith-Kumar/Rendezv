@@ -83,7 +83,7 @@ export const getEvents = async (req, res) => {
 export const getEventByCity = async (req, res) => {
     try {
         const { city } = req.params;
-        const events = await Event.find({ city }).populate('categories').populate('organizer_id');
+        const events = await Event.find({ city : city || null }).populate('categories').populate('organizer_id');
         res.status(200).json({ events });
     }
     catch (error) {
